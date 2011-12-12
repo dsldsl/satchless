@@ -193,7 +193,7 @@ if __name__ == "__main__":
 
 
     failures = satchless_tests(int(options.verbosity), options.interactive,
-                               options.failfast, TESTED_APPS)
+                               options.failfast, args or TESTED_APPS)
 
     if failures:
         sys.exit(int(failures))
