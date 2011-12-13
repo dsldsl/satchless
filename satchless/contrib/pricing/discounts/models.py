@@ -10,8 +10,9 @@ class DiscountType(Subtyped):
 
 
 class Discount(Subtyped):
-    type = models.ForeignKey(DiscountType)
-    item = models.ForeignKey(OrderedItem, null=True, blank=True)
+    type = models.ForeignKey(DiscountType, related_name='discounts')
+    item = models.ForeignKey(OrderedItem, null=True, blank=True,
+                             related_name='discounts')
     deduction = models.DecimalField(max_digits=12, decimal_places=4)
 
     def __unicode__(self):

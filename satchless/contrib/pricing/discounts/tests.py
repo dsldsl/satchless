@@ -2,14 +2,13 @@ from decimal import Decimal
 from django.test import TestCase
 from django.db import models as django_models
 
-from . import models, handler, DiscountApplicationHandler,\
-    DiscountEligibilityHandler
-from .handler import DiscountApplicationQueue, DiscountEligibilityQueue
+from . import models, DiscountApplicationHandler, DiscountEligibilityHandler,\
+    DiscountPricingHandler
+from .queue import DiscountApplicationQueue, DiscountEligibilityQueue
 from ....product.tests import DeadParrot
 from ....cart.models import Cart, CartItem
 from ....pricing import Price, PricingHandler
 from ....pricing.handler import PricingQueue
-from ....product.models import Variant
 
 class DiscountApplicationTest(TestCase):
     class OneDollarOffApplicationHandler(DiscountApplicationHandler):
@@ -128,8 +127,8 @@ class DiscountEligibilityTest(TestCase):
         scope = self
         def create_check_handler(check_types=None):
             class CheckTypeEligibilityHandler(DiscountApplicationHandler):
-                def get_variant_discount_types(self, product, discount_types,
-                                               variant=None, **context):
+                def get_variant_discount_types(self, variant, discount_types,
+                                               **context):
                     for check_type in check_types:
                         scope.assertTrue(check_type in discount_types,
                             '%s not found in %s' % (check_type, discount_types))
@@ -197,8 +196,8 @@ class DiscountPricingHandlerTest(TestCase):
 
         elig_queue = DiscountEligibilityQueue(TestEligibilityHandler())
         app_queue = DiscountApplicationQueue(TestApplicationHandler())
-        self.pricing_handler = handler.DiscountPricingHandler(
-            elig_queue=elig_queue, app_queue=app_queue)
+        self.pricing_handler = DiscountPricingHandler(elig_queue=elig_queue,
+                                                      app_queue=app_queue)
         
         self.pricing_queue = PricingQueue(TestSimplePricingHandler,
                                           self.pricing_handler)
