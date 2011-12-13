@@ -55,5 +55,5 @@ class DiscountPricingHandler(PricingHandler):
                 discount.save()
             discount_total += type_total
 
-        price = Price(net=price.gross - discount_total)
+        price = Price(net=price.gross - discount_total, currency=currency)
         return price
