@@ -8,6 +8,7 @@ class BaseVariantForm(forms.Form):
 
     def __init__(self, *args, **kwargs):
         self.product = kwargs.pop('product')
+        self.request = kwargs.pop('request', None)
         variant = kwargs.pop('variant', None)
         super(BaseVariantForm, self).__init__(*args, **kwargs)
         # If we have a Variant, fill initials with data from the instance

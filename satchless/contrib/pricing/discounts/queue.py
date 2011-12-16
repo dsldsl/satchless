@@ -1,4 +1,5 @@
 from decimal import Decimal
+from django.conf import settings
 
 from ....pricing import Price
 from ....core.handler import QueueHandler
@@ -29,3 +30,13 @@ class DiscountApplicationQueue(DiscountApplicationHandler, QueueHandler):
             total_deduction += deduction
             price = Price(net=price.net - deduction)
         return total_deduction
+
+discount_eligibility_handlers = getattr(settings,
+    'SATCHLESS_DISCOUNT_ELIGIBILITY_HANDLERS', [])
+discount_eligibility_queue = DiscountEligibilityQueue(
+    *discount_eligibility_handlers)
+
+discount_application_handlers = getattr(settings,
+    'SATCHLESS_DISCOUNT_APPLICATION_HANDLERS', [])
+discount_application_queue = DiscountApplicationQueue(
+    *discount_application_handlers)

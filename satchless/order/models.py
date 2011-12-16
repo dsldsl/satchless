@@ -141,17 +141,18 @@ class Order(models.Model):
     def create_delivery_group(self):
         return self.groups.create(order=self)
 
-    def create_ordered_item(self, delivery_group, item):
-        price = item.get_unit_price()
+    def create_ordered_item(self, delivery_group, item, **context):
         variant = item.variant.get_subtype_instance()
         name = unicode(variant)
-        ordered_item_class = self.get_ordered_item_class()
+        price = item.get_unit_price(delivery_group=delivery_group, **context)
+        ordered_item_class = self.get_ordered_item_class(**context)
         ordered_item = ordered_item_class(delivery_group=delivery_group,
                                           product_variant=item.variant,
                                           product_name=name,
                                           quantity=item.quantity,
                                           unit_price_net=price.net,
-                                          unit_price_gross=price.gross)
+                                          unit_price_gross=price.gross,
+                                          **context)
         return ordered_item
 
     def get_ordered_item_class(self):
@@ -161,20 +162,20 @@ class DeliveryGroup(models.Model):
     order = models.ForeignKey(Order, related_name='groups')
     delivery_type = models.CharField(max_length=256, blank=True)
 
-    def subtotal(self):
-        return sum([i.price() for i in self.items.all()],
+    def subtotal(self, **context):
+        return sum([i.price(**context) for i in self.items.all()],
                    Price(0, currency=self.order.currency))
 
-    def delivery_price(self):
+    def delivery_price(self, **context):
         try:
             return Price(self.deliveryvariant.price,
                          currency=self.order.currency)
         except ObjectDoesNotExist:
             return Price(0, currency=self.order.currency)
 
-    def total(self):
-        delivery_price = self.delivery_price()
-        return delivery_price + sum([i.price() for i in self.items.all()],
+    def total(self, **context):
+        delivery_price = self.delivery_price(**context)
+        return delivery_price + sum([i.price(**context) for i in self.items.all()],
                                     Price(0, currency=self.order.currency))
 
 

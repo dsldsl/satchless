@@ -25,6 +25,7 @@ class BasePriceNode(Node):
                        for k, v in self.kwargs.items()])
         self.pricing_handler = kwargs.pop('handler', pricing_queue)
         currency = kwargs.pop('currency', self.get_currency_for_item(item))
+        kwargs['request'] = context.get('request')
         result = ''
         if currency:
             r = self.get_price(item, currency, **kwargs)

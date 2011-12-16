@@ -1,14 +1,13 @@
 from decimal import Decimal
 from django.test import TestCase
-from django.db import models as django_models
 
 from . import models, DiscountApplicationHandler, DiscountEligibilityHandler,\
     DiscountPricingHandler
 from .queue import DiscountApplicationQueue, DiscountEligibilityQueue
 from ....product.tests import DeadParrot
-from ....cart.models import Cart, CartItem
 from ....pricing import Price, PricingHandler
 from ....pricing.handler import PricingQueue
+from ....order.models import Order, DeliveryGroup, OrderedItem
 
 class DiscountApplicationTest(TestCase):
     class OneDollarOffApplicationHandler(DiscountApplicationHandler):
@@ -168,21 +167,18 @@ class DiscountPricingHandlerTest(TestCase):
     ORIGINAL_PRICE = 15
     DISCOUNT_AMOUNT = 10
 
-    class TestCartItem(CartItem):
-        cart = django_models.ForeignKey(Cart)
-
     def setUp(self):
         self.product = DeadParrot.objects.create(species='Norwegian Blue')
         self.variant = self.product.variants.create(color='blue',
                                                     looks_alive=False)
 
-        discount_type = models.DiscountType.objects.create(name='test')
+        self.discount_type = models.DiscountType.objects.create(name='test')
 
         scope = self
         class TestEligibilityHandler(DiscountEligibilityHandler):
             def get_variant_discount_types(self, variant, discount_types,
                                            **context):
-                discount_types.append(discount_type)
+                discount_types.append(scope.discount_type)
                 return discount_types
 
         class TestApplicationHandler(DiscountApplicationHandler):
@@ -191,7 +187,8 @@ class DiscountPricingHandlerTest(TestCase):
                 return Decimal(scope.DISCOUNT_AMOUNT)
 
         class TestSimplePricingHandler(PricingHandler):
-            def get_variant_price(self, variant, currency, quantity=1, **kwargs):
+            def get_variant_price(self, variant, currency, quantity=1,
+                                  **kwargs):
                 return Price(net=scope.ORIGINAL_PRICE)
 
         elig_queue = DiscountEligibilityQueue(TestEligibilityHandler())
@@ -216,21 +213,33 @@ class DiscountPricingHandlerTest(TestCase):
                          '`cartitem` passed.')
 
     def test_discount_objects_created_for_order(self):
-        cart = Cart.objects.create()
-        cartitem = self.TestCartItem.objects.create(variant=self.variant,
-                                                    quantity=1, cart=cart)
+        order = Order.objects.create()
+        delivery_group = DeliveryGroup.objects.create(order=order)
+        ordered_item = OrderedItem.objects.create(delivery_group=delivery_group,
+                                                  product_name='',
+                                                  unit_price_gross=0,
+                                                  unit_price_net=0,
+                                                  quantity=1)
         try:
             original_discounts_count = models.Discount.objects.count()
             price = self.pricing_queue.get_variant_price(self.variant,
-                                                         cartitem=cartitem)
+                ordered_item=ordered_item)
             discounts_count = models.Discount.objects.count()
 
-            self.assertEqual(price.gross, self.ORIGINAL_PRICE - self.DISCOUNT_AMOUNT,
-                             'Price incorrectly calculated (got %.2f, expected %.2f)'
+            self.assertEqual(price.gross,
+                             self.ORIGINAL_PRICE - self.DISCOUNT_AMOUNT,
+                             'Price incorrectly calculated (got %.2f, '
+                             'expected %.2f)'
                              % (price.gross,
                                 self.ORIGINAL_PRICE - self.DISCOUNT_AMOUNT))
             self.assertEqual(original_discounts_count + 1, discounts_count,
-                             'Discount object not created when `cartitem` passed.')
+                             'Discount object not created when '
+                             '`ordered_item` passed.')
+            self.assertEqual(models.Discount.objects.all()[0].type,
+                             self.discount_type)
+            self.assertEqual(models.Discount.objects.all()[0].item,
+                             ordered_item)
         finally:
-            cart.delete()
-            cartitem.delete()
+            ordered_item.delete()
+            delivery_group.delete()
+            order.delete()

@@ -1,5 +1,4 @@
 from decimal import Decimal
-from django.conf import settings
 
 from ....pricing import PricingHandler, Price
 from .models import Discount
@@ -17,17 +16,8 @@ class DiscountApplicationHandler(object):
 
 class DiscountPricingHandler(PricingHandler):
     def __init__(self, elig_queue=None, app_queue=None):
-        from .queue import DiscountEligibilityQueue, DiscountApplicationQueue
-
-        discount_eligibility_handlers = getattr(settings,
-            'SATCHLESS_DISCOUNT_ELIGIBILITY_HANDLERS', [])
-        discount_eligibility_queue = DiscountEligibilityQueue(
-            *discount_eligibility_handlers)
-
-        discount_application_handlers = getattr(settings,
-            'SATCHLESS_DISCOUNT_APPLICATION_HANDLERS', [])
-        discount_application_queue = DiscountApplicationQueue(
-            *discount_application_handlers)
+        from .queue import discount_eligibility_queue, \
+            discount_application_queue
 
         self.elig_queue = elig_queue or discount_eligibility_queue
         self.app_queue = app_queue or discount_application_queue
@@ -36,24 +26,25 @@ class DiscountPricingHandler(PricingHandler):
         return kwargs.get('price_range')
 
     def get_variant_price(self, variant, currency, quantity=1, **kwargs):
-        # cartitem is passed when transferring items from the cart to the order
-        cartitem = kwargs.get('cartitem')
+        ordered_item = kwargs.get('ordered_item')
 
         discount_types = self.elig_queue.get_variant_discount_types(variant, [],
                                                                     **kwargs)
 
-        price = kwargs.get('price')
+        price = kwargs.pop('price', Price(currency=currency))
         discount_total = Decimal('0')
         for discount_type in discount_types:
             discount = Discount(type=discount_type,
                                     deduction=Decimal('0'))
             type_total = self.app_queue.get_variant_discount(variant, discount,
                                                              discount_types,
-                                                             price, price)
-            if cartitem:
+                                                             price, price,
+                                                             **kwargs)
+            if ordered_item:
                 discount.deduction = type_total
+                discount.item = ordered_item
                 discount.save()
             discount_total += type_total
 
-        price = Price(net=price.gross - discount_total, currency=currency)
+        price = Price(net=price.net - discount_total, currency=currency)
         return price

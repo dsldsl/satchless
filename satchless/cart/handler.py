@@ -65,7 +65,7 @@ class AddToCartHandler(object):
                 cart = self.cart_class.objects.get_or_create_from_request(request,
                                                                           self.typ)
                 form = Form(data=request.POST, cart=cart, product=product,
-                            variant=variant, typ=self.typ)
+                            variant=variant, typ=self.typ, request=request)
                 if form.is_valid():
                     form_result = form.save()
                     signals.cart_item_added.send(sender=type(form_result.cart_item),
@@ -81,7 +81,7 @@ class AddToCartHandler(object):
                     return JSONResponse(data, status=400)
             else:
                 form = Form(data=None, product=product, variant=variant,
-                            typ=self.typ)
+                            typ=self.typ, request=request)
             # Attach the form to instance
             setattr(instance, self.form_attribute, form)
         return extra_context
