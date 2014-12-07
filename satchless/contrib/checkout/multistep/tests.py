@@ -2,7 +2,7 @@
 from decimal import Decimal
 from django.http import HttpResponse, HttpRequest
 from django.conf import settings
-from django.conf.urls.defaults import patterns, include, url
+from django.conf.urls import patterns, include, url
 from django.core.urlresolvers import reverse
 from django.test import TestCase, Client
 

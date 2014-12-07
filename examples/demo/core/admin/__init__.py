@@ -13,7 +13,7 @@ from . import widgets
 
 class GulliverAdminSite(admin.AdminSite):
     def get_urls(self):
-        from django.conf.urls.defaults import patterns, url
+        from django.conf.urls import patterns, url
 
         urls = super(GulliverAdminSite, self).get_urls()
         urls += patterns('',

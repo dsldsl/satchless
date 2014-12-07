@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from decimal import Decimal
-from django.conf.urls.defaults import patterns, include, url
+from django.conf.urls import patterns, include, url
 from django.db import models as dj_models
 from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
