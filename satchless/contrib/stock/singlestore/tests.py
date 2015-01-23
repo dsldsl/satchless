@@ -18,7 +18,7 @@ class StockedDeadParrotVariant(Variant, VariantStockLevelMixin):
     )
     product = models.ForeignKey(StockedDeadParrot, related_name='variants')
     color = models.CharField(max_length=10, choices=COLOR_CHOICES)
-    looks_alive = models.BooleanField()
+    looks_alive = models.BooleanField(default=False)
 
     class Meta:
         unique_together = ('product', 'color', 'looks_alive')

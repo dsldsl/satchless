@@ -21,7 +21,7 @@ class ParrotVariant(Variant):
     )
     product = models.ForeignKey(Parrot, related_name='variants')
     color = models.CharField(max_length=10, choices=COLOR_CHOICES)
-    looks_alive = models.BooleanField()
+    looks_alive = models.BooleanField(default=False)
 
     def __unicode__(self):
         alive = _("Alive") if self.looks_alive else _("Dead")
