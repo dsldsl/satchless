@@ -4,4 +4,4 @@ Satchless
 The Django e-commerce framework for perfectionists who also care about code
 quality.
 '''
-VERSION = (2011, 9, 'pre')
+VERSION = (0, 0, 14)
