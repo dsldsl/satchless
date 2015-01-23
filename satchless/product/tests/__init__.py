@@ -23,7 +23,7 @@ class DeadParrotVariant(Variant):
     )
     product = models.ForeignKey(DeadParrot, related_name='variants')
     color = models.CharField(max_length=10, choices=COLOR_CHOICES)
-    looks_alive = models.BooleanField()
+    looks_alive = models.BooleanField(default=False)
 
     class Meta:
         unique_together = ('product', 'color', 'looks_alive')

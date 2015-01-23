@@ -1,5 +1,5 @@
 from django.conf import settings
-from django.conf.urls.defaults import patterns, include, url
+from django.conf.urls import patterns, include, url
 
 from core.admin import gulliver_admin
 from carts.app import cart_app, wishlist_app

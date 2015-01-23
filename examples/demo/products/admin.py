@@ -2,7 +2,6 @@
 from django.conf import settings
 from django.contrib import admin
 import django.db.models
-from django.db.models.query import EmptyQuerySet
 
 import satchless.category.admin
 import satchless.contrib.pricing.simpleqty.admin
@@ -31,7 +30,7 @@ class ProductForm(satchless.category.admin.ProductForm):
             self.fields['main_image'].queryset = (models.ProductImage.objects
                                                         .filter(product=self.instance))
         else:
-            self.fields['main_image'].queryset = EmptyQuerySet(model=models.ProductImage)
+            self.fields['main_image'].queryset = models.ProductImage.objects.none()
 
 
 class ProductAdmin(satchless.category.admin.ProductAdmin):
