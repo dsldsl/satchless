@@ -38,8 +38,9 @@ def get_authed_amounts(pg_trace_number, pg_authorization_code):
             for p in auth_pg_variant_refs]
 
 
-def pg_pay(variant, transaction_type, amount=None, first_name=None,
-           last_name=None, client_token=None, payment_token=None,
+def pg_pay(variant, transaction_type, amount=None,
+           first_name=None, last_name=None, zipcode=None,
+           client_token=None, payment_token=None,
            merchant_data=None, dict_extras=None):
     svc = SudsClient(settings.PG_PAYMENT_WSDL).service
     kwargs = {
@@ -51,6 +52,9 @@ def pg_pay(variant, transaction_type, amount=None, first_name=None,
         kwargs['ecom_billto_postal_name_first'] = first_name
     if last_name:
         kwargs['ecom_billto_postal_name_last'] = last_name
+    if zipcode:
+        kwargs['ecom_billto_postal_postalcode'] = zipcode
+        kwargs['pg_avs_method'] = "10000"  # Test but don't fail on zipcode match
     if client_token:
         kwargs['pg_client_id'] = client_token
     if payment_token:
@@ -115,11 +119,11 @@ def pg_pay(variant, transaction_type, amount=None, first_name=None,
                                   data.get('pg_response_description')))
 
 
-def auth_via_cc(variant, amount, first_name=None, last_name=None,
+def auth_via_cc(variant, amount, first_name=None, last_name=None, zipcode=None,
                 client_token=None, payment_token=None):
     random_order_id = {'ecom_consumerorderid': id_generator(15)}
     return pg_pay(variant, PG_TRANSACTION_TYPE_AUTH, amount=amount,
-                  first_name=first_name, last_name=last_name,
+                  first_name=first_name, last_name=last_name, zipcode=zipcode,
                   client_token=client_token, payment_token=payment_token,
                   dict_extras=random_order_id)
 
@@ -227,6 +231,7 @@ class PaymentsGatewayProvider(PaymentProvider):
             auth_via_cc(variant_ref, amount,
                         first_name=variant_ref.token_first_name,
                         last_name=variant_ref.token_last_name,
+                        zipcode=variant_ref.token_zipcode,
                         payment_token=variant_ref.pg_payment_token)
         elif variant_ref.pg_client_token:
             auth_via_cc(variant_ref, amount,

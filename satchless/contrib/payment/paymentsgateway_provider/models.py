@@ -60,6 +60,7 @@ class PaymentsGatewayVariant(PaymentVariant):
     pg_payment_token = models.CharField(max_length=50, blank=True, null=True)
     token_first_name = models.CharField(max_length=50, blank=True, null=True)
     token_last_name = models.CharField(max_length=50, blank=True, null=True)
+    token_zipcode = models.CharField(max_length=10, blank=True, null=True)
     receipt = models.ForeignKey(PaymentsGatewayReceipt, blank=True, null=True)
     merchant_bucket = models.CharField(max_length=40, blank=True, null=True)
     pg_trace_number = models.CharField(max_length=50, blank=True, null=True)
