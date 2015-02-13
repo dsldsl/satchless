@@ -24,6 +24,21 @@ PG_TRANSACTION_TYPE_VOID = '14'
 
 PG_RESPONSE_CODE_SUCCESS = 'A01'
 
+# Forte AVS Method
+# 0 - Do not perform
+# 1 - Check but don't decline on mismatch
+# 2 - Check and decline on mismatch
+#
+# #####
+# |||||
+# ||||+-email
+# |||+--area code matches state
+# ||+---zip matches state
+# |+----AVS street number check
+# +-----AVS zipcode check
+
+AVS_METHOD = "10000"  # Test ZIP but don't fail
+
 
 def id_generator(size=6, chars=string.ascii_uppercase + string.digits):
     return ''.join(random.choice(chars) for x in range(size))
@@ -54,7 +69,7 @@ def pg_pay(variant, transaction_type, amount=None,
         kwargs['ecom_billto_postal_name_last'] = last_name
     if zipcode:
         kwargs['ecom_billto_postal_postalcode'] = zipcode
-        kwargs['pg_avs_method'] = "10000"  # Test but don't fail on zipcode match
+        kwargs['pg_avs_method'] = AVS_METHOD
     if client_token:
         kwargs['pg_client_id'] = client_token
     if payment_token:
