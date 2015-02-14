@@ -14,6 +14,8 @@ class PaymentForm(forms.ModelForm):
                                        label=_('PaymentsGateway Token First Name'))
     token_last_name = forms.CharField(max_length=50, required=False,
                                       label=_('PaymentsGateway Token Last Name'))
+    token_zipcode = forms.CharField(max_length=10, required=False,
+                                    label=_('PaymentsGateway Token ZIP Code'))
     pg_trace_number = forms.CharField(max_length=50, required=False)
     pg_authorization_code = forms.CharField(max_length=100, required=False)
 
@@ -21,7 +23,7 @@ class PaymentForm(forms.ModelForm):
         model = models.PaymentsGatewayVariant
         fields = ('amount', 'pg_client_token', 'pg_payment_token',
                   'description', 'token_first_name', 'token_last_name',
-                  'pg_trace_number', 'pg_authorization_code',
+                  'token_zipcode', 'pg_trace_number', 'pg_authorization_code',
                   'merchant_bucket')
 
     def clean(self):
