@@ -69,7 +69,7 @@
                                 Inclusive VAT <br />
                                 Exclusive shipping costs<br />
                             </p>
-                            <form action="{% url wishlist:add-to-cart cart_item.id %}" method="post">
+                            <form action="{% url 'wishlist:add-to-cart' cart_item.id %}" method="post">
                                 {% csrf_token %}
                                 <input class="cart" name="satchless_cart" type="submit" value="{% trans "Add to cart" %}" />
                             </form>

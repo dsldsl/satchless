@@ -15,7 +15,7 @@
 
 {% block top-bar %}
     <div id="header" class="container_24">
-        <a class="logo grid_3" href="{% url home-page %}"><img src="{{ STATIC_URL }}img/logo.png" alt="{% trans "Satchless Demo" %}" /></a>
+        <a class="logo grid_3" href="{% url 'home-page' %}"><img src="{{ STATIC_URL }}img/logo.png" alt="{% trans "Satchless Demo" %}" /></a>
         <ul class="menu grid_15">
 {% for category in root_categories %}
             <li>
@@ -28,7 +28,7 @@
             </li>
 {% endfor %}
             <li class="sale">
-                <a href="{% url sale %}">SALE</a>
+                <a href="{% url 'sale' %}">SALE</a>
             </li>
             <li class="about-us">
                 <a href="{# url sale #}">About us</a>
@@ -38,15 +38,15 @@
             </li>
         </ul>
         <div class="shortcuts grid_6">
-            <form class="search" method="get" action="{% url satchless-search-haystack-predictive %}"><input class="q" type="text" name="q" value="{{ request.GET.keywords }}" /><input class="submit" type="submit" value="Search" /></form>
+            <form class="search" method="get" action="{% url 'satchless-search-haystack-predictive' %}"><input class="q" type="text" name="q" value="{{ request.GET.keywords }}" /><input class="submit" type="submit" value="Search" /></form>
             <ul class="languages">{% spaceless %}
 {% for lang in LANGUAGES %}
                 <li class="{% if forloop.first %}first{% endif %}">{% if lang.0  == LANGUAGE_CODE %}{{ lang.1 }}{% else %}<a href="{{ request.path|chlocale:lang.0 }}">{{ lang.1 }}</a>{% endif %}</li>
 {% endfor %}
             {% endspaceless %}</ul>
             <div class="carts">
-                <a class="wishlist" href="{% url wishlist:details %}">{{ wishlist_size|floatformat:0 }}<img src="{{ STATIC_URL }}img/icons/wishlist.png" alt="wishlist" /></a>
-                <a href="{% url cart:details %}">{{ cart_size|floatformat:0 }}<img src="{{ STATIC_URL }}img/icons/cart.png" alt="cart" /></a>
+                <a class="wishlist" href="{% url 'wishlist:details' %}">{{ wishlist_size|floatformat:0 }}<img src="{{ STATIC_URL }}img/icons/wishlist.png" alt="wishlist" /></a>
+                <a href="{% url 'cart:details' %}">{{ cart_size|floatformat:0 }}<img src="{{ STATIC_URL }}img/icons/cart.png" alt="cart" /></a>
             </div>
         </div>
         <div class="grid_24">

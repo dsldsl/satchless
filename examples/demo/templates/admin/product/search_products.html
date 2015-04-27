@@ -7,7 +7,7 @@
 {% block content %}
 <div id="search-products">
     <div class="search filter module">
-        <form action="{% url admin:search-products %}"  method="get" id="search-product">
+        <form action="{% url 'admin:search-products' %}"  method="get" id="search-product">
             <input type="text" id="searchbar" name="q">
             <button class="search" type="submit" value="" name="search" >&nbsp;</button>
         </form>
