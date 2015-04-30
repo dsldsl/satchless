@@ -4,6 +4,14 @@ class PaymentFailure(Exception):
         self.error_message = error_message
 
 
+class PaymentsGatewayReceiptFormError(PaymentFailure):
+    def __init__(self, form):
+        error_message = ', '.join(
+            [':'.join([key, ', '.join(errors)])
+             for key, errors in form.errors.items()])
+        super(PaymentsGatewayReceiptFormError, self).__init__(error_message)
+
+
 class ConfirmationFormNeeded(Exception):
     def __init__(self, form=None, action='', method='post'):
         super(ConfirmationFormNeeded, self).__init__()

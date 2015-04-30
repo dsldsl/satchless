@@ -8,7 +8,8 @@ from suds.client import Client as SudsClient
 import datetime
 import os
 
-from ....payment import PaymentProvider, PaymentFailure, PaymentType
+from ....payment import PaymentProvider, PaymentFailure, PaymentType, \
+    PaymentsGatewayReceiptFormError
 from . import forms
 from . import models
 import string
@@ -128,6 +129,8 @@ def pg_pay(variant, transaction_type, amount=None,
         if receipt_form.is_valid():
             variant.receipt = receipt_form.save()
             variant.save()
+        else:
+            raise PaymentsGatewayReceiptFormError(receipt_form)
         if data.get('pg_response_type') != 'A':
             raise PaymentFailure("%s %s" %
                                  (data.get('pg_response_code'),
