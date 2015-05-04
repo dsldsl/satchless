@@ -8,7 +8,7 @@ class PaymentsGatewayReceiptFormError(PaymentFailure):
     def __init__(self, form):
         error_message = ', '.join(
             [':'.join([key, ', '.join(errors)])
-             for key, errors in form.errors.items()])
+             for key, errors in form._errors.items()])
         super(PaymentsGatewayReceiptFormError, self).__init__(error_message)
 
 
