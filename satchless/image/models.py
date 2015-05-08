@@ -36,6 +36,9 @@ class Image(models.Model):
     height = models.PositiveIntegerField(default=0, editable=False)
     width = models.PositiveIntegerField(default=0, editable=False)
 
+    class Meta:
+        app_label = 'satchless_image'
+
     def get_by_size(self, size):
         return self.thumbnail_set.get(size=size)
 
@@ -50,7 +53,7 @@ class Image(models.Model):
 
 def thumbnail_upload_to(instance, filename, **kwargs):
     return hashed_upload_to('image/thumbnail/by-md5/', instance, filename)
-    
+
 
 class ThumbnailManager(models.Manager):
     def get_or_create_at_size(self, image_id, size):
@@ -77,11 +80,12 @@ class Thumbnail(models.Model):
     size = models.CharField(max_length=100)
     height = models.PositiveIntegerField(default=0, editable=False)
     width = models.PositiveIntegerField(default=0, editable=False)
-    
+
     objects = ThumbnailManager()
 
     class Meta:
         unique_together = ('image', 'size')
+        app_label = 'satchless_image'
 
     def get_absolute_url(self):
         return self.image.url
