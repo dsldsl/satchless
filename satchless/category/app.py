@@ -94,7 +94,7 @@ class CategorizedProductApp(app.ProductApp):
             # paths
             url(r'^$', self.category_list,
                 name='category-index'),
-            # this url simplifies url templatetag usage ({% url slug %} instead of {% url '' slug %})
+            # this url simplifies url templatetag usage ({% url 'slug' %} instead of {% url '' slug %})
             url(r'^(?P<category_slug>[a-z0-9_-]+)/$',
                 self.category_details, name='category-details',
                 kwargs={'parent_slugs': ''}),
