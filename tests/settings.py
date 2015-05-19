@@ -17,4 +17,5 @@ DATABASES = {
         'ENGINE': 'django.db.backends.sqlite3'
     },
 }
-
+SECRET_KEY = '7361ab73b4c4e4865b20397de6cc119a'
+TEST_RUNNER = 'django.test.runner.DiscoverRunner'

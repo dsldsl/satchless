@@ -17,7 +17,6 @@ ALWAYS_INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.sites',
     'django.contrib.staticfiles',
-
     'satchless.cart',
     'satchless.category',
     'satchless.contact',
@@ -25,7 +24,7 @@ ALWAYS_INSTALLED_APPS = [
     'satchless.contrib.pricing.simpleqty',
     'satchless.contrib.tax.flatgroups',
     'satchless.delivery',
-    'satchless.image',
+    'satchless.satchless_image',
     'satchless.order',
     'satchless.payment',
     'satchless.pricing',
@@ -134,10 +133,7 @@ def satchless_tests(verbosity, interactive, failfast, tested_apps):
     settings_state = setup(verbosity, tested_apps)
     modules_names = []
     for test_label in tested_apps:
-        if '.' in test_label:
-            modules_names.append(test_label.rsplit('.', 1)[1])
-        else:
-            modules_names.append(test_label)
+        modules_names.append(test_label)
 
     if hasattr(TestRunner, 'func_name'):
         # Pre 1.2 test runners were just functions,
