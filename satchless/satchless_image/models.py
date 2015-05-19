@@ -36,9 +36,6 @@ class Image(models.Model):
     height = models.PositiveIntegerField(default=0, editable=False)
     width = models.PositiveIntegerField(default=0, editable=False)
 
-    class Meta:
-        app_label = 'satchless_image'
-
     def get_by_size(self, size):
         return self.thumbnail_set.get(size=size)
 
@@ -85,7 +82,6 @@ class Thumbnail(models.Model):
 
     class Meta:
         unique_together = ('image', 'size')
-        app_label = 'satchless_image'
 
     def get_absolute_url(self):
         return self.image.url

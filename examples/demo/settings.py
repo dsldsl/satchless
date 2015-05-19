@@ -139,7 +139,7 @@ INSTALLED_APPS = (
     'mptt',
     'satchless.product',
     'satchless.category',
-    'satchless.image',
+    'satchless.satchless_image',
     'satchless.contrib.productset',
     #'satchless.contact',
     'satchless.cart',

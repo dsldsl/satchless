@@ -5,7 +5,7 @@ from django.conf import settings
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from mothertongue.models import MothertongueModelTranslate
-from satchless.image.models import Image
+from satchless.satchless_image.models import Image
 import satchless.product.models
 
 class ProductImage(Image):

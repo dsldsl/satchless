@@ -70,7 +70,7 @@ SATCHLESS_IMAGE_SIZES
 ---------------------
 
 A dictionary of allowed image sizes. The ``at_size`` template tag from
-``satchless.image`` application accepts one of it's keys as an argument.
+``satchless.satchless_image`` application accepts one of it's keys as an argument.
 Example::
 
     SATCHLESS_IMAGE_SIZES = {
@@ -116,5 +116,5 @@ SATCHLESS_PRICING_HANDLERS
 A list of pricing handlers. :ref:`Simple pricing with quantity discounts
 <contrib-pricing-simpleqty>` and caching handlers
 (satchless.contrib.pricing.cache.CacheFactory) are good examples of use.
-Python paths and instances are accepted. The syntax is the same as for 
+Python paths and instances are accepted. The syntax is the same as for
 ``SATCHLESS_DELIVERY_PROVIDERS``.

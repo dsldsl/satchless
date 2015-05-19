@@ -2,7 +2,7 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
 from ...product.models import Variant
-from ...image.models import Image
+from ...satchless_image.models import Image
 
 class ProductSet(models.Model):
     name = models.CharField(_('name'), max_length=128)
