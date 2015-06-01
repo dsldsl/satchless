@@ -110,11 +110,11 @@ class Order(models.Model):
     def billing_full_name(self):
         return u'%s %s' % (self.billing_first_name, self.billing_last_name)
 
-    def set_status(self, new_status):
+    def set_status(self, new_status, extra_fields=[]):
         old_status = self.status
         self.status = new_status
         self.last_status_change = datetime.datetime.now()
-        self.save()
+        self.save(update_fields=['status', 'last_status_change']+extra_fields)
         signals.order_status_changed.send(sender=type(self), instance=self,
                                           old_status=old_status)
 
