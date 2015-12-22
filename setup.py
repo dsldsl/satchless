@@ -23,7 +23,7 @@ CLASSIFIERS = [
 ]
 
 REQUIREMENTS = [
-    'Django>=1.3.<1.7',
+    'Django>=1.3,<1.7',
     'django-mptt>=0.4.2,<0.8.0',
 ]
 
