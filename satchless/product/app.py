@@ -30,7 +30,7 @@ class ProductApp(SatchlessApp):
         context['product'] = product
         context = self.get_context_data(request, **context)
         product_data = {
-            'product_model': product._meta.module_name,
+            'product_model': product._meta.model_name,
         }
         templates = [t % product_data for t in self.product_details_templates]
         return TemplateResponse(request, templates, context)
