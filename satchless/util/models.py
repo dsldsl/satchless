@@ -15,8 +15,8 @@ class SubtypedManager(models.Manager):
                         yield '%s__%s' % (a, s)
 
     # https://code.djangoproject.com/ticket/16572
-    #def get_query_set(self):
-    #    qs = super(SubtypedManager, self).get_query_set()
+    #def get_queryset(self):
+    #    qs = super(SubtypedManager, self).get_queryset()
     #    subclasses = list(self.find_subclasses(self.model))
     #    if subclasses:
     #        return qs.select_related(*subclasses)
