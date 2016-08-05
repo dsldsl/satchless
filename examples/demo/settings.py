@@ -1,8 +1,6 @@
 # -*- coding:utf-8 -*-
 import os
 import re
-from localeurl.models import patch_reverse
-patch_reverse()
 from satchless.contrib.pricing.cache import PricingCacheHandler
 
 from django.core.urlresolvers import reverse
@@ -153,7 +151,6 @@ INSTALLED_APPS = (
     'satchless.contrib.delivery.simplepost',
     'satchless.payment',
     'products',
-    'south',
     'pagination',
     'core',
     'carts',
@@ -165,7 +162,7 @@ INSTALLED_APPS = (
     'search.haystack_predictive',
     'payments',
     'payments.dummy',
-    'satchless.contrib.payment.django_payments_provider',
+    #'satchless.contrib.payment.django_payments_provider',
 )
 
 SATCHLESS_IMAGE_SIZES = {
@@ -248,10 +245,10 @@ HAYSTACK_WHOOSH_PATH = os.path.join(PROJECT_ROOT, 'whoosh_index')
 
 INTERNAL_IPS = ['127.0.0.1']
 
-# http://south.aeracode.org/ticket/520
-SOUTH_TESTS_MIGRATE = False
-
 try:
     execfile(os.path.join(PROJECT_ROOT, 'local_settings.py'))
 except IOError:
     pass
+
+from localeurl.models import patch_reverse
+patch_reverse()
