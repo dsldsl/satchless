@@ -61,7 +61,9 @@ class Order(models.Model):
                                    editable=False, blank=True)
     last_status_change = models.DateTimeField(default=datetime.datetime.now,
                                    editable=False, blank=True)
-    user = models.ForeignKey(User, blank=True, null=True, related_name='orders')
+    user = models.ForeignKey(User, blank=True, null=True,
+                             related_name='orders',
+                             on_delete=models.PROTECT)
     currency = models.CharField(max_length=3)
     billing_first_name = models.CharField(_("first name"),
                                           max_length=256, blank=True)
@@ -191,7 +193,7 @@ class OrderedItem(models.Model):
     delivery_group = models.ForeignKey(DeliveryGroup, related_name='items')
     product_variant = models.ForeignKey(Variant, blank=True, null=True,
                                         related_name='+',
-                                        on_delete=models.SET_NULL)
+                                        on_delete=models.PROTECT)
     product_name = models.CharField(max_length=128)
     quantity = models.DecimalField(_('quantity'),
                                    max_digits=10, decimal_places=4)
