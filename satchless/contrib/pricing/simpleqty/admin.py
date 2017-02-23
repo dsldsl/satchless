@@ -11,6 +11,7 @@ class PriceQtyOverrideForm(forms.ModelForm):
             'min_qty': DecimalInput(),
             'price': DecimalInput(min_decimal_places=2),
         }
+        fields = '__all__'
 
 
 class PriceQtyOverrideInline(admin.TabularInline):
@@ -23,6 +24,7 @@ class VariantOffsetForm(forms.ModelForm):
         widgets = {
             'price_offset': DecimalInput(min_decimal_places=2),
         }
+        fields = '__all__'
 
 
 class VariantOffsetFormSet(BaseInlineFormSet):
@@ -44,6 +46,7 @@ class ProductPriceForm(forms.ModelForm):
         widgets = {
             'price': DecimalInput(min_decimal_places=2),
         }
+        fields = '__all__'
 
 class ProductPriceAdmin(admin.ModelAdmin):
     inlines = [PriceQtyOverrideInline, VariantPriceOffsetInline]

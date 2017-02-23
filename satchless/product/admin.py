@@ -7,6 +7,7 @@ from . import models
 class ProductForm(forms.ModelForm):
     class Meta:
         model = models.Product
+        fields = '__all__'
 
 
 # you should use satchless.category.admin.ProductAdmin if you are using category app

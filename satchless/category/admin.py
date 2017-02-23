@@ -13,6 +13,7 @@ class ProductForm(forms.ModelForm):
                                                     .order_by('tree_id', 'lft'), required=False)
     class Meta:
         model = Product
+        fields = '__all__'
 
     def __init__(self, *args, **kwargs):
         super(ProductForm, self).__init__(*args, **kwargs)
