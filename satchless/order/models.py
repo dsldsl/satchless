@@ -1,6 +1,6 @@
 import datetime
 import decimal
-from django.contrib.auth.models import User
+from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
@@ -61,7 +61,7 @@ class Order(models.Model):
                                    editable=False, blank=True)
     last_status_change = models.DateTimeField(default=datetime.datetime.now,
                                    editable=False, blank=True)
-    user = models.ForeignKey(User, blank=True, null=True,
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True,
                              related_name='orders',
                              on_delete=models.PROTECT)
     currency = models.CharField(max_length=3)

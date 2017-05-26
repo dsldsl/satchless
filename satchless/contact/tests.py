@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from django.core.urlresolvers import reverse
 from django.test import TestCase, Client
 
@@ -8,8 +8,8 @@ from . import models
 
 class ContactTest(ViewsTestCase):
     def setUp(self):
-        self.user1 = User.objects.create(username="testuser")
-        self.user2 = User.objects.create(username="testlooser")
+        self.user1 = get_user_model().objects.create(username="testuser")
+        self.user2 = get_user_model().objects.create(username="testlooser")
         self.user1.set_password(u"pasło")
         self.user1.save()
         self.user2.set_password(u"hasword")

@@ -1,6 +1,6 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
-from django.contrib.auth.models import User
+from django.conf import settings
 
 from ..util import countries
 
@@ -32,7 +32,7 @@ class CustomerManager(models.Manager):
 
 
 class Customer(models.Model):
-    user = models.OneToOneField(User, null=True, blank=True)
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, null=True, blank=True)
     billing_address = models.ForeignKey(Address, related_name='billing_customers', null=True, blank=True)
     shipping_address = models.ForeignKey(Address, related_name='shipping_customers', null=True, blank=True)
     email = models.EmailField(_("email"))

@@ -2,7 +2,7 @@
 from decimal import Decimal
 from django.conf.urls import patterns, include, url
 from django.db import models as dj_models
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse
 from django.test import Client
@@ -76,7 +76,7 @@ class Cart(ViewsTestCase):
         self.cockatoo_blue_d = self.cockatoo.variants.create(color='blue',
                                                              looks_alive=False)
         # only staff users can view uncategorized products
-        self.user1 = User.objects.create(username="testuser", is_staff=True,
+        self.user1 = get_user_model().objects.create(username="testuser", is_staff=True,
                                          is_superuser=True)
         self.user1.set_password(u"pasło")
         self.category_birds.products.add(self.macaw)
