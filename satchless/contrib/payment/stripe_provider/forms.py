@@ -44,4 +44,4 @@ class PaymentForm(forms.ModelForm):
 class StripeReceiptForm(forms.ModelForm):
     class Meta:
         model = models.StripeReceipt
-
+        fields = '__all__'

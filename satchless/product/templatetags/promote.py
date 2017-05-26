@@ -1,5 +1,6 @@
 from django import template
 from django.db import models
+from django.template import base
 
 register = template.Library()
 
@@ -18,7 +19,7 @@ class PromoteNode(template.Node):
 
 @register.tag(name='promote')
 def do_promote(parser, token):
-    class PromoteParser(template.TokenParser):
+    class PromoteParser(base.TokenParser):
         def top(self):
             arg = self.value()
             assert self.tag() == 'as'
