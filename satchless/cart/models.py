@@ -2,7 +2,7 @@
 from decimal import Decimal
 from django.conf import settings
 from django.db import models
-from django.contrib.auth.models import User
+from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 from django.core.exceptions import ObjectDoesNotExist
 
@@ -43,7 +43,7 @@ class QuantityResult(object):
         self.reason = reason
 
 class Cart(models.Model):
-    owner = models.ForeignKey(User, null=True, blank=True, related_name='carts')
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, related_name='carts')
     typ = models.CharField(_("type"), max_length=100)
     currency = models.CharField(_("currency"), max_length=3,
                                 default=get_default_currency)
