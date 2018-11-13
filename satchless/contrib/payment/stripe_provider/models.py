@@ -30,5 +30,5 @@ class StripeReceipt(models.Model):
 class StripeVariant(PaymentVariant):
     stripe_customer_id = models.CharField(max_length=50, blank=True, null=True)
     stripe_card_id = models.CharField(max_length=50, blank=True, null=True)
-    receipt = models.ForeignKey(StripeReceipt, blank=True, null=True)
+    receipt = models.ForeignKey(StripeReceipt, blank=True, null=True, on_delete=models.PROTECT)
 

@@ -35,15 +35,18 @@ class CartManager(models.Manager):
             request.session[CART_SESSION_KEY % typ] = cart.pk
             return cart
 
+
 class QuantityResult(object):
     def __init__(self, cart_item, new_quantity, quantity_delta, reason=None):
         self.cart_item = cart_item
         self.new_quantity = new_quantity
-        self.quantity_delta =  quantity_delta
+        self.quantity_delta = quantity_delta
         self.reason = reason
 
+
 class Cart(models.Model):
-    owner = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, related_name='carts')
+    owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL, null=True, blank=True, related_name='carts', on_delete=models.PROTECT)
     typ = models.CharField(_("type"), max_length=100)
     currency = models.CharField(_("currency"), max_length=3,
                                 default=get_default_currency)
@@ -144,9 +147,10 @@ class Cart(models.Model):
         return sum([i.price() for i in self.get_all_items().all()],
                    Price(0, currency=self.currency))
 
+
 class CartItem(models.Model):
 
-    variant = models.ForeignKey(Variant, related_name='+')
+    variant = models.ForeignKey(Variant, related_name='+', on_delete=models.PROTECT)
     quantity = models.DecimalField(_("quantity"), max_digits=10,
                                    decimal_places=4)
 

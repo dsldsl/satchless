@@ -168,7 +168,7 @@ class Order(models.Model):
 
 
 class DeliveryGroup(models.Model):
-    order = models.ForeignKey(Order, related_name='groups')
+    order = models.ForeignKey(Order, related_name='groups', on_delete=models.PROTECT)
     delivery_type = models.CharField(max_length=256, blank=True)
 
     def subtotal(self, currency=None):
@@ -190,7 +190,7 @@ class DeliveryGroup(models.Model):
 
 
 class OrderedItem(models.Model):
-    delivery_group = models.ForeignKey(DeliveryGroup, related_name='items')
+    delivery_group = models.ForeignKey(DeliveryGroup, related_name='items', on_delete=models.PROTECT)
     product_variant = models.ForeignKey(Variant, blank=True, null=True,
                                         related_name='+',
                                         on_delete=models.PROTECT)
