@@ -3,6 +3,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from ....delivery.models import PhysicalShippingVariant
 
+
 class PostShippingType(models.Model):
     typ = models.SlugField(max_length=50, unique=True)
     name = models.CharField(_('name'), max_length=128)
