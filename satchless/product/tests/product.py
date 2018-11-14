@@ -2,7 +2,7 @@
 import os
 
 from django.conf import settings
-from django.conf.urls import patterns, include, url
+from django.conf.urls import include, url
 from django.core.urlresolvers import reverse
 #from django.db import connection, reset_queries
 from django.test import TestCase, Client
@@ -17,9 +17,9 @@ from . import DeadParrot, DeadParrotVariant, ZombieParrot, DeadParrotVariantForm
 __all__ = ['Models', 'Registry', 'Views']
 
 class urls:
-    urlpatterns = patterns('',
+    urlpatterns = [
         url(r'^products/', include(product_app.urls)),
-    )
+    ]
 
 class Models(TestCase):
     urls = urls

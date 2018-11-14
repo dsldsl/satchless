@@ -1,4 +1,4 @@
-from django.conf.urls import patterns, url
+from django.conf.urls import url
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django.template.response import TemplateResponse
@@ -36,11 +36,11 @@ class ProductApp(SatchlessApp):
         return TemplateResponse(request, templates, context)
 
     def get_urls(self):
-        return patterns('',
+        return [
             # '+' predeces product slug to prevent conflicts with categories
             # paths
             url(r'^\+(?P<product_pk>[0-9]+)-(?P<product_slug>[a-z0-9_-]+)/$',
                 self.product_details, name='details'),
-        )
+        ]
 
 product_app = ProductApp()
