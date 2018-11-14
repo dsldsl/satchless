@@ -13,14 +13,14 @@ from . import widgets
 
 class GulliverAdminSite(admin.AdminSite):
     def get_urls(self):
-        from django.conf.urls import patterns, url
+        from django.conf.urls import url
 
         urls = super(GulliverAdminSite, self).get_urls()
-        urls += patterns('',
+        urls += [
             url(r'^search/products/$', self.admin_view(search_products),
                 kwargs={'template_name': 'admin/product/search_products.html'},
                 name='search-products'),
-        )
+        ]
         return urls
 
 gulliver_admin = GulliverAdminSite()
