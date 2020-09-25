@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from django.conf.urls import patterns, url
+from django.conf.urls import url
 from django.template.response import TemplateResponse
 
 from ....checkout import app
@@ -120,13 +120,13 @@ class MulitStepCheckoutApp(app.CheckoutApp):
         return proceed(order, form)
 
     def get_urls(self):
-        return super(MulitStepCheckoutApp, self).get_urls() + patterns('',
+        return super(MulitStepCheckoutApp, self).get_urls() + [
             url(r'^(?P<order_token>\w+)/delivery-details/$',
                 self.delivery_details, name='delivery-details'),
             url(r'^(?P<order_token>\w+)/payment-choice/$', self.payment_choice,
                 name='payment-choice'),
             url(r'^(?P<order_token>\w+)/payment-details/$',
                 self.payment_details, name='payment-details'),
-        )
+        ]
 
 checkout_app = MulitStepCheckoutApp()

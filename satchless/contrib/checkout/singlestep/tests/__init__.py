@@ -39,7 +39,7 @@ class App(BaseCheckoutAppTests):
 
         satchless_dir = os.path.join(os.path.dirname(__file__), '..', '..', '..', '..')
         self.custom_settings = {
-            'SATCHLESS_PRODUCT_VIEW_HANDLERS': ('satchless.cart.add_to_cart_handler',),
+            'SATCHLESS_PRODUCT_VIEW_HANDLERS': ('satchless.cart.handler.add_to_cart_handler',),
             'TEMPLATE_DIRS': (os.path.join(satchless_dir, 'category', 'templates'),
                               os.path.join(satchless_dir, 'order', 'templates'),
                               os.path.join(satchless_dir, 'cart', 'templates'),

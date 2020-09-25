@@ -85,3 +85,6 @@ class AddToCartHandler(object):
             # Attach the form to instance
             setattr(instance, self.form_attribute, form)
         return extra_context
+
+
+add_to_cart_handler = AddToCartHandler('cart')

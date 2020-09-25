@@ -46,7 +46,7 @@ Second, add the following lines to ``settings.py``:
 ::
 
     SATCHLESS_PRODUCT_VIEW_HANDLERS = [
-        'satchless.cart.add_to_cart_handler',
+        'satchless.cart.handler.add_to_cart_handler',
     ]
 
 Now the cart is enabled. If you wish to know the topic better or use other cart

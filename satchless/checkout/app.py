@@ -1,4 +1,4 @@
-from django.conf.urls import patterns, url
+from django.conf.urls import url
 from django.shortcuts import redirect
 from django.template.response import TemplateResponse
 from django.utils.decorators import method_decorator
@@ -98,7 +98,7 @@ class CheckoutApp(SatchlessApp):
         return redirect('order:details', order_token=order.token)
 
     def get_urls(self):
-        return patterns('',
+        return [
             url(r'^prepare/$', self.prepare_order,
                 name='prepare-order'),
             url(r'^(?P<order_token>\w+)/$', self.checkout,
@@ -107,4 +107,4 @@ class CheckoutApp(SatchlessApp):
                 name='confirmation'),
             url(r'^(?P<order_token>\w+)/reactivate/$', self.reactivate_order,
                 name='reactivate-order'),
-        )
+        ]

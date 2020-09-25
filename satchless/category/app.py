@@ -1,4 +1,4 @@
-from django.conf.urls import patterns, url
+from django.conf.urls import url
 from django.http import Http404
 from django.http import HttpResponseNotFound
 from django.template.response import TemplateResponse
@@ -89,7 +89,7 @@ class CategorizedProductApp(app.ProductApp):
         return product
 
     def get_urls(self):
-        url_patterns = patterns('',
+        url_patterns = [
             # '+' predeces product slug to prevent conflicts with categories
             # paths
             url(r'^$', self.category_list,
@@ -102,7 +102,7 @@ class CategorizedProductApp(app.ProductApp):
                 self.category_details, name='category-details'),
             url(r'^(?P<category_slugs>([a-z0-9_-]+/)+)\+(?P<product_slug>[a-z0-9_-]+)/$',
                 self.product_details, name='details'),
-        )
+        ]
         if self.allow_uncategorized_product_urls:
             url_patterns += super(CategorizedProductApp, self).get_urls()
         return url_patterns

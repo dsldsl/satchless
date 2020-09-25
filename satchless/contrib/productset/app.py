@@ -1,4 +1,4 @@
-from django.conf.urls import patterns, url
+from django.conf.urls import url
 from django.http import HttpResponse
 from django.template.response import TemplateResponse
 from django.shortcuts import get_object_or_404
@@ -37,13 +37,13 @@ class ProductSetApp(SatchlessApp):
 
     def get_urls(self, prefix=None):
         prefix = prefix or 'satchless-productset'
-        return patterns('',
+        return [
             url(r'^$',
                 self.index_view,
                 name=prefix),
             url(r'^(?P<slug>[a-z0-9_-]+)/$',
                 self.details_view,
                 name='%s-details' % (prefix,)),
-        )
+        ]
 
 productset_app = ProductSetApp()

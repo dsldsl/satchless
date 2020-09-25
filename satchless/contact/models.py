@@ -4,8 +4,9 @@ from django.conf import settings
 
 from ..util import countries
 
+
 class Address(models.Model):
-    customer = models.ForeignKey('Customer', related_name='addressbook')
+    customer = models.ForeignKey('Customer', related_name='addressbook', on_delete=models.PROTECT)
     alias = models.CharField(_("short alias"), max_length=30,
             help_text=_("User-defined alias which identifies this address"))
     full_name = models.CharField(_("full person name"), max_length=256)
@@ -33,8 +34,8 @@ class CustomerManager(models.Manager):
 
 class Customer(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, null=True, blank=True)
-    billing_address = models.ForeignKey(Address, related_name='billing_customers', null=True, blank=True)
-    shipping_address = models.ForeignKey(Address, related_name='shipping_customers', null=True, blank=True)
+    billing_address = models.ForeignKey(Address, related_name='billing_customers', null=True, blank=True, on_delete=models.PROTECT)
+    shipping_address = models.ForeignKey(Address, related_name='shipping_customers', null=True, blank=True, on_delete=models.PROTECT)
     email = models.EmailField(_("email"))
 
     objects = CustomerManager()

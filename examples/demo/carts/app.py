@@ -1,4 +1,4 @@
-from django.conf.urls import patterns, url
+from django.conf.urls import url
 from django.shortcuts import get_object_or_404, redirect
 from models import DemoCart
 from satchless.cart import app
@@ -25,10 +25,10 @@ class WishlistApp(app.CartApp):
 
     def get_urls(self):
         parent_urls = super(WishlistApp, self).get_urls()
-        return parent_urls + patterns('',
+        return parent_urls + [
             url(r'^add-to-cart/(?P<wishlist_item_id>\d+)/$', self.add_to_cart,
                 name='add-to-cart'),
-        )
+        ]
 
 
 class CartApp(app.CartApp):

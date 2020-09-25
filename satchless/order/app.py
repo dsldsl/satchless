@@ -1,4 +1,4 @@
-from django.conf.urls import patterns, url
+from django.conf.urls import url
 from django.shortcuts import get_object_or_404
 from django.template.response import TemplateResponse
 
@@ -46,10 +46,10 @@ class OrderApp(SatchlessApp):
 
     def get_urls(self, prefix=None):
         prefix = prefix or self.app_name
-        return patterns('',
+        return [
             url(r'^$', self.index, name='index'),
             url(r'^(?P<order_token>[0-9a-zA-Z]+)/$', self.details,
                 name='details'),
-        )
+        ]
 
 order_app = OrderApp()

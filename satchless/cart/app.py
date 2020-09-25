@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from django.conf.urls import patterns, url
+from django.conf.urls import url
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.template.response import TemplateResponse
@@ -69,10 +69,10 @@ class CartApp(SatchlessApp):
         return self.redirect('details')
 
     def get_urls(self):
-        return patterns('',
+        return [
             url(r'^view/$', self.cart, name='details'),
             url(r'^remove/(?P<item_pk>[0-9]+)/$', self.remove_item,
                 name='remove-item'),
-        )
+        ]
 
 cart_app = CartApp()

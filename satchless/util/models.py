@@ -1,12 +1,12 @@
 from django.db import models
-from django.db.models.fields.related import SingleRelatedObjectDescriptor
+from django.db.models.fields.related_descriptors import ReverseOneToOneDescriptor
 from django.dispatch import receiver
 
 class SubtypedManager(models.Manager):
     def find_subclasses(self, root):
         for a in dir(root):
             attr = getattr(root, a)
-            if isinstance(attr, SingleRelatedObjectDescriptor):
+            if isinstance(attr, ReverseOneToOneDescriptor):
                 child = attr.related.model
                 if (issubclass(child, root) and
                     child is not root):

@@ -53,7 +53,7 @@ class OrderTest(ViewsTestCase):
         handler.pricing_queue = handler.PricingQueue(FiveZlotyPriceHandler)
         app_dir = os.path.dirname(__file__)
         self.custom_settings = {
-            'SATCHLESS_PRODUCT_VIEW_HANDLERS': ('satchless.cart.add_to_cart_handler',),
+            'SATCHLESS_PRODUCT_VIEW_HANDLERS': ('satchless.cart.handler.add_to_cart_handler',),
             'TEMPLATE_DIRS': [os.path.join(app_dir, 'templates'),
                               os.path.join(app_dir, '..', 'product',
                                            'tests', 'templates')]
