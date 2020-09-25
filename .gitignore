@@ -4,3 +4,8 @@
 *~
 doc/_build
 website/*.db
+*.py.bak
+build/
+Pipfile*
+dist/
+*.egg-info

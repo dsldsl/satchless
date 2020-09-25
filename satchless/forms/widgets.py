@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 from decimal import Decimal
 from django.forms.widgets import TextInput
 from ..util import decimal_format

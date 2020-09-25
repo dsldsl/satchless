@@ -1,4 +1,5 @@
 # -*- coding:utf-8 -*-
+from __future__ import absolute_import
 from haystack.forms import SearchForm
 from haystack.query import RelatedSearchQuerySet
 

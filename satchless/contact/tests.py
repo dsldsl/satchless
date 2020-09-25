@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
+from __future__ import absolute_import
 from django.contrib.auth import get_user_model
 from django.core.urlresolvers import reverse
 from django.test import TestCase, Client
 
 from ..util.tests import ViewsTestCase
 from . import models
+import six
 
 class ContactTest(ViewsTestCase):
     def setUp(self):
@@ -27,7 +29,7 @@ class ContactTest(ViewsTestCase):
                 full_name="Test User", street_address_1="pl. Solny 13/42",
                 city=u"Wrocław", postal_code="50-061", country='PL')
         self.assertEqual(a1.customer.user, self.user1)
-        self.assertEqual(a1.alias, unicode(a1))
+        self.assertEqual(a1.alias, six.text_type(a1))
 
     def test_views(self):
         models.Customer.objects.get_or_create_for_user(self.user1)

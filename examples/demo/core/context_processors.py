@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 from satchless.category.models import Category
 
 def root_categories(request):

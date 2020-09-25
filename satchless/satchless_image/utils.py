@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 from PIL import Image
 
 # this neat function is based on easy-thumbnails

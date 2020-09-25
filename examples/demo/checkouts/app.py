@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 from orders.models import DemoOrder
 from carts.models import DemoCart
 from satchless.contrib.checkout.multistep import app

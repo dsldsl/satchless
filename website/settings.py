@@ -1,5 +1,6 @@
 # Django settings for ss project.
 
+from __future__ import absolute_import
 import os
 PROJECT_PATH = os.path.dirname( __file__ )
 
@@ -108,6 +109,6 @@ TEMPLATE_CONTEXT_PROCESSORS = (
 )
 
 try:
-    execfile(os.path.join(PROJECT_PATH, 'custom_settings.py'))
+    exec(compile(open(os.path.join(PROJECT_PATH, 'custom_settings.py'), "rb").read(), os.path.join(PROJECT_PATH, 'custom_settings.py'), 'exec'))
 except IOError:
     pass

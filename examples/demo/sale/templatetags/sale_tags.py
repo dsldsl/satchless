@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 from django.utils.datastructures import SortedDict
 from django.conf import settings
 from django.core.urlresolvers import reverse
@@ -27,7 +28,7 @@ def subcategories_in_sale(category):
     subcategories = query.add_filtered_related_count(Category.tree, all_subcategories,
                                                   discounted_products, 'category', 'products_count',
                                                   cumulative=True)
-    subcategories = filter(lambda cat: cat.products_count, subcategories)
+    subcategories = [cat for cat in subcategories if cat.products_count]
     return subcategories
 
 @register.filter

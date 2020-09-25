@@ -1,5 +1,6 @@
+from __future__ import absolute_import
 from decimal import Decimal
-import urllib2
+import six.moves.urllib.request, six.moves.urllib.error, six.moves.urllib.parse
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 

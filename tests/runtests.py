@@ -1,4 +1,6 @@
 #!/usr/bin/env python
+from __future__ import absolute_import
+from __future__ import print_function
 import os, sys
 
 import satchless.contrib as contrib
@@ -101,7 +103,7 @@ def setup(verbosity, test_modules):
         # no modules were named (i.e., run all), import
         # this module and add it to the list to test.
         if verbosity >= 2:
-            print "Importing application %s" % module_name
+            print("Importing application %s" % module_name)
         mod = load_app(module_label)
         if mod:
             if module_label not in settings.INSTALLED_APPS:

@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 from satchless.pricing import Price, PriceRange, PricingHandler
 
 from . import models

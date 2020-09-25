@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 from django.http import HttpResponseNotFound
 from django.shortcuts import get_object_or_404, redirect
 

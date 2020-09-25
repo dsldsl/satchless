@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 from django.utils.translation import ugettext
 
 from satchless.contrib.delivery.simplepost import models, forms

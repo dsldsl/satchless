@@ -1,6 +1,7 @@
+from __future__ import absolute_import
 from django.conf.urls import url
 from django.shortcuts import get_object_or_404, redirect
-from models import DemoCart
+from .models import DemoCart
 from satchless.cart import app
 from satchless.cart import signals
 from satchless.cart.models import Cart

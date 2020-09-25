@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 from django.db import models
 from django.db.models.fields.related_descriptors import ReverseOneToOneDescriptor
 from django.dispatch import receiver
@@ -61,11 +62,11 @@ class Subtyped(models.Model):
     def store_subtype(self, klass):
         if not self.id:
             path = [self]
-            parents = self._meta.parents.keys()
+            parents = list(self._meta.parents.keys())
             while parents:
                 parent = parents[0]
                 path.append(parent)
-                parents = parent._meta.parents.keys()
+                parents = list(parent._meta.parents.keys())
             path = [p._meta.model_name for p in reversed(path)]
             self.subtype_attr = ' '.join(path)
 

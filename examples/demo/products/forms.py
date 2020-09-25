@@ -1,9 +1,12 @@
 # -*- coding:utf-8 -*-
+from __future__ import absolute_import
 from django import forms
 
 from satchless.product.forms import BaseVariantForm, variant_form_for_product
 
 from . import models
+from six.moves import filter
+from six.moves import zip
 
 has_side_effects = True
 
@@ -16,8 +19,8 @@ def _get_existing_variants_choices(queryset, field_names):
             field_name = field_names[index]
             original_choices = queryset.model._meta.get_field(field_name).choices
             flt = lambda choice: choice[0] in existing_field_choices
-            existing_choices[field_names[index]] = filter(flt,
-                                                          original_choices)
+            existing_choices[field_names[index]] = list(filter(flt,
+                                                          original_choices))
     else:
         for field_name in field_names:
             existing_choices[field_name] = []

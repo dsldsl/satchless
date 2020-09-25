@@ -1,4 +1,5 @@
-from models import DemoCart
+from __future__ import absolute_import
+from .models import DemoCart
 from satchless.cart.handler import AddToCartHandler
 
 from . import forms

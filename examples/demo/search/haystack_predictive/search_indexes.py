@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 from haystack import site
 from haystack.indexes import EdgeNgramField, SearchIndex
 

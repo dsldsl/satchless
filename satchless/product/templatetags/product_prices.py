@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 from django.conf import settings
 from django import template
 from django.template.base import Node

@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 from django.core.exceptions import ObjectDoesNotExist
 from mamona.models import build_payment_model
 

@@ -1,13 +1,14 @@
+from __future__ import absolute_import
 from django.conf import settings
 from django.conf.urls import include, url
 
-from core.admin import gulliver_admin
-from carts.app import cart_app, wishlist_app
-from categories.app import product_app
-from orders.app import order_app
+from .core.admin import gulliver_admin
+from .carts.app import cart_app, wishlist_app
+from .categories.app import product_app
+from .orders.app import order_app
 from satchless.contrib.productset.app import productset_app
-from checkouts.app import checkout_app
-import core.views
+from .checkouts.app import checkout_app
+from . import core.views
 
 urlpatterns = [
     url(r'^$', core.views.home_page, name='home-page'),

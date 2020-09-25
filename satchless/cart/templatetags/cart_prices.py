@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 from django import template
 
 from ...product.templatetags.product_prices import BasePriceNode, parse_price_tag

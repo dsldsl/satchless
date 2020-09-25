@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 from django.shortcuts import get_object_or_404
 from django.template.response import TemplateResponse
 
@@ -26,7 +27,7 @@ def details(request, slug):
     if len(response) == 1:
         return response[0]
     elif len(response) > 1:
-        raise ValueError, "Multiple responses returned."
+        raise ValueError("Multiple responses returned.")
     context['variants'] = variant_instances
     context['productset'] = productset
     return TemplateResponse(request, 'satchless/productset/details.html',

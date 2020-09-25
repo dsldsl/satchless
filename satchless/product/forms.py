@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 from django import forms
 import inspect
 
@@ -14,7 +15,7 @@ class BaseVariantForm(forms.Form):
         if variant:
             for field in variant._meta.fields:
                 name = field.name
-                if not self.fields.has_key(name):
+                if name not in self.fields:
                     continue
                 self.fields[name].initial = getattr(variant, name)
 

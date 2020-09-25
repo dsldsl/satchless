@@ -1,4 +1,5 @@
 # -*- coding:utf-8 -*-
+from __future__ import absolute_import
 from django.http import HttpResponseNotFound
 from django.template.response import TemplateResponse
 
@@ -9,7 +10,7 @@ from . import query
 
 def index(request, category_slugs=None):
     if category_slugs:
-        category_slugs = filter(None, category_slugs.split('/'))
+        category_slugs = [_f for _f in category_slugs.split('/') if _f]
         try:
             path = Category.path_from_slugs(category_slugs)
         except Category.DoesNotExist:
@@ -33,7 +34,7 @@ def index(request, category_slugs=None):
                                                   'category',
                                                   'products_count',
                                                   cumulative=True)
-    categories = filter(lambda cat: cat.products_count, categories)
+    categories = [cat for cat in categories if cat.products_count]
     return TemplateResponse(request, 'sale/index.html', {
         'categories': categories,
         'category': category,

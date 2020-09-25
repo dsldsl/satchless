@@ -1,5 +1,6 @@
+from __future__ import absolute_import
 from satchless.order import app
-from models import DemoOrder
+from .models import DemoOrder
 
 class OrderApp(app.OrderApp):
 

@@ -1,6 +1,7 @@
+from __future__ import absolute_import
 from decimal import Decimal
 from unidecode import unidecode
-import urllib2
+import six.moves.urllib.request, six.moves.urllib.error, six.moves.urllib.parse
 from django.utils.translation import ugettext
 from authorizenet.utils import process_payment
 
@@ -8,6 +9,7 @@ from ....delivery.models import DeliveryVariant, PhysicalShippingVariant
 from ....payment import PaymentProvider, PaymentFailure, PaymentType
 from . import forms
 from . import models
+import six
 
 class AuthorizeNetProvider(PaymentProvider):
     form_class = forms.PaymentForm
@@ -35,9 +37,8 @@ class AuthorizeNetProvider(PaymentProvider):
                     result['ship_to_first_name'] = shipping.shipping_first_name
                     result['ship_to_last_name'] = shipping.shipping_last_name
                     result['ship_to_company'] = shipping.shipping_company_name
-                    address = filter(None,
-                                     [shipping.shipping_street_address_1,
-                                      shipping.shipping_street_address_2])
+                    address = [_f for _f in [shipping.shipping_street_address_1,
+                                      shipping.shipping_street_address_2] if _f]
                     result['ship_to_address'] = '\n'.join(address)
                     result['ship_to_city'] = shipping.shipping_city
                     result['ship_to_state'] = shipping.shipping_country_area
@@ -53,9 +54,8 @@ class AuthorizeNetProvider(PaymentProvider):
         result['first_name'] = order.billing_first_name
         result['last_name'] = order.billing_last_name
         result['company'] = order.billing_company_name
-        address = filter(None,
-                         [order.billing_street_address_1,
-                          order.billing_street_address_2])
+        address = [_f for _f in [order.billing_street_address_1,
+                          order.billing_street_address_2] if _f]
         result['address'] = '\n'.join(address)
         result['city'] = order.billing_city
         result['state'] = order.billing_country_area
@@ -81,11 +81,11 @@ class AuthorizeNetProvider(PaymentProvider):
             data['card_code'] = v.cc_cvv2
         data.update(self.get_billing_data(order))
         data.update(self.get_shipping_data(order))
-        data = dict((k, unidecode(v) if isinstance(v, unicode) else v)
+        data = dict((k, unidecode(v) if isinstance(v, six.text_type) else v)
                     for k, v in data.items())
         try:
             response = process_payment(data, {})
-        except urllib2.URLError:
+        except six.moves.urllib.error.URLError:
             raise PaymentFailure(ugettext("Could not connect to the gateway."))
         v.cc_cvv2 = ''  # Forget the CVV2 number immediately after the transaction
         v.response = response

@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 from django import dispatch
 
 product_view = dispatch.Signal(providing_args=['instances', 'request', 'response', 'extra_context'])

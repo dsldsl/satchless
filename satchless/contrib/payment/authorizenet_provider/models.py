@@ -1,8 +1,10 @@
+from __future__ import absolute_import
 import authorizenet
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
 from ....payment.models import PaymentVariant
+from six.moves import range
 
 class AuthorizeNetVariant(PaymentVariant):
     cc_name = models.CharField(_('Name on Credit Card'), max_length=128)

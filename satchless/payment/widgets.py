@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 import datetime
 import re
 
@@ -9,6 +10,8 @@ from django.utils.formats import get_format
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
 import time
+import six
+from six.moves import range
 
 class SelectMonthWidget(Widget):
     """
@@ -25,14 +28,14 @@ class SelectMonthWidget(Widget):
             self.years = years
         else:
             this_year = datetime.date.today().year
-            self.years = range(this_year, this_year+10)
+            self.years = list(range(this_year, this_year+10))
 
     def render(self, name, value, attrs=None):
         try:
             year_val, month_val = value.year, value.month
         except AttributeError:
             year_val = month_val = None
-            if isinstance(value, basestring):
+            if isinstance(value, six.string_types):
                 if settings.USE_L10N:
                     try:
                         input_format = get_format('DATE_INPUT_FORMATS')[0]

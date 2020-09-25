@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 from django.conf.urls import url
 from django.shortcuts import redirect
 from django.template.response import TemplateResponse
@@ -86,7 +87,7 @@ class CheckoutApp(SatchlessApp):
                                request=request)
         try:
             handler.payment_queue.confirm(order=order)
-        except ConfirmationFormNeeded, e:
+        except ConfirmationFormNeeded as e:
             return TemplateResponse(request, self.confirmation_templates, {
                 'formdata': e,
                 'order': order,

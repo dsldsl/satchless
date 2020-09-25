@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 from django.conf.urls import url
 from django.http import Http404
 from django.http import HttpResponseNotFound
@@ -27,7 +28,7 @@ class CategorizedProductApp(app.ProductApp):
             return []
         leaves = self.category_model.objects.filter(slug=slugs[-1])
         if not leaves:
-            raise self.category_model.DoesNotExist, "slug='%s'" % slugs[-1]
+            raise self.category_model.DoesNotExist("slug='%s'" % slugs[-1])
         for leaf in leaves:
             path = leaf.get_ancestors()
             if len(path) + 1 != len(slugs):
@@ -46,7 +47,7 @@ class CategorizedProductApp(app.ProductApp):
         return TemplateResponse(request, templates, context)
 
     def category_details(self, request, parent_slugs, category_slug):
-        slugs = filter(None, parent_slugs.split('/') + [category_slug])
+        slugs = [_f for _f in parent_slugs.split('/') + [category_slug] if _f]
         try:
             path = self.path_from_slugs(slugs)
         except self.category_model.DoesNotExist:
@@ -72,7 +73,7 @@ class CategorizedProductApp(app.ProductApp):
     def get_product(self, request, category_slugs='', product_slug=None,
                     product_pk=None):
         slugs = category_slugs.split('/')
-        path = self.path_from_slugs(filter(None, slugs))
+        path = self.path_from_slugs([_f for _f in slugs if _f])
         products = self.product_model.objects.all()
         if product_slug:
             products = products.filter(slug=product_slug)

@@ -1,4 +1,5 @@
 # -*- coding:utf-8 -*-
+from __future__ import absolute_import
 import os
 import re
 from satchless.contrib.pricing.cache import PricingCacheHandler
@@ -246,7 +247,7 @@ HAYSTACK_WHOOSH_PATH = os.path.join(PROJECT_ROOT, 'whoosh_index')
 INTERNAL_IPS = ['127.0.0.1']
 
 try:
-    execfile(os.path.join(PROJECT_ROOT, 'local_settings.py'))
+    exec(compile(open(os.path.join(PROJECT_ROOT, 'local_settings.py'), "rb").read(), os.path.join(PROJECT_ROOT, 'local_settings.py'), 'exec'))
 except IOError:
     pass
 

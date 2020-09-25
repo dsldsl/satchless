@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 from ....payment.models import PaymentVariant
 from django.db import models
 

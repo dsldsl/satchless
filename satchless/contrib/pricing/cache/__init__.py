@@ -1,4 +1,5 @@
-import urllib
+from __future__ import absolute_import
+import six.moves.urllib.request, six.moves.urllib.parse, six.moves.urllib.error
 
 from ....core.handler import QueueHandler
 from ....pricing import PricingHandler
@@ -13,7 +14,7 @@ class PricingCacheHandler(PricingHandler, QueueHandler):
         return ret
 
     def _get_key(self, **kwargs):
-        return urllib.urlencode(self.get_cache_key(**kwargs), True)
+        return six.moves.urllib.parse.urlencode(self.get_cache_key(**kwargs), True)
 
     def get_variant_price(self, variant, currency, price, quantity=1, **context):
         # Visit cache for a matching entry first

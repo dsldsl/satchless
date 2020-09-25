@@ -1,4 +1,5 @@
 # -*- coding:utf-8 -*-
+from __future__ import absolute_import
 import os
 
 from django.conf import settings
@@ -7,6 +8,8 @@ from django.utils.translation import ugettext_lazy as _
 from mothertongue.models import MothertongueModelTranslate
 from satchless.satchless_image.models import Image
 import satchless.product.models
+import six
+from six.moves import range
 
 class ProductImage(Image):
     product = models.ForeignKey(satchless.product.models.Product, related_name="images")
@@ -102,7 +105,7 @@ class DressVariant(ColoredVariant):
     size = models.CharField(choices=SIZE_CHOICES, max_length=2)
 
     def __unicode__(self):
-        return '%s (%s / %s)' % (unicode(self.product), self.get_color_display(),
+        return '%s (%s / %s)' % (six.text_type(self.product), self.get_color_display(),
                                  self.get_size_display())
 
 
@@ -120,7 +123,7 @@ class HatVariant(satchless.product.models.Variant):
     product = models.ForeignKey(Hat, related_name='variants')
 
     def __unicode__(self):
-        return unicode(self.product)
+        return six.text_type(self.product)
 
 
 class Jacket(Product):
@@ -139,7 +142,7 @@ class JacketVariant(ColoredVariant):
     size = models.CharField(choices=SIZE_CHOICES, max_length=2)
 
     def __unicode__(self):
-        return '%s (%s / %s)' % (unicode(self.product), self.get_color_display(),
+        return '%s (%s / %s)' % (six.text_type(self.product), self.get_color_display(),
                                  self.get_size_display())
 
 
@@ -159,7 +162,7 @@ class ShirtVariant(ColoredVariant):
     size = models.CharField(choices=SIZE_CHOICES, max_length=2)
 
     def __unicode__(self):
-        return '%s (%s / %s)' % (unicode(self.product), self.get_color_display(),
+        return '%s (%s / %s)' % (six.text_type(self.product), self.get_color_display(),
                                  self.get_size_display())
 
 

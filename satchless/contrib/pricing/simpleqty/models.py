@@ -1,8 +1,10 @@
+from __future__ import absolute_import
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
 from ....product.models import Product, Variant
+import six
 
 class ProductPrice(models.Model):
     QTY_MODE_CHOICES = (
@@ -21,7 +23,7 @@ class ProductPrice(models.Model):
     price = models.DecimalField(_("base price"), max_digits=12, decimal_places=4)
 
     def __unicode__(self):
-        return unicode(self.product)
+        return six.text_type(self.product)
 
 
 class PriceQtyOverride(models.Model):

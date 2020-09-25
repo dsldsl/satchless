@@ -1,6 +1,8 @@
 # -*- coding:utf-8 -*-
 
+from __future__ import absolute_import
 from django import forms
+import six
 
 class CategoryMixin:
     def label_from_instance(self, obj):
@@ -13,7 +15,7 @@ class CategoryMixin:
                 indent += u'└ '
             else:
                 indent += u'├ '
-        return u'%s%s' % (indent, unicode(obj))
+        return u'%s%s' % (indent, six.text_type(obj))
 
 class CategoryChoiceField(CategoryMixin, forms.ModelChoiceField):
     pass

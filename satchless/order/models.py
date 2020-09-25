@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 import datetime
 import decimal
 from django.conf import settings
@@ -11,6 +12,8 @@ from ..product.models import Variant
 from ..util import countries
 from . import signals
 from .exceptions import EmptyCart
+import six
+from six.moves import range
 
 class OrderManager(models.Manager):
 
@@ -100,7 +103,7 @@ class Order(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.token:
-            for i in xrange(100):
+            for i in range(100):
                 token = ''.join(random.sample(
                                 '0123456789abcdefghijklmnopqrstuvwxyz', 32))
                 if not Order.objects.filter(token=token).exists():
@@ -146,7 +149,7 @@ class Order(models.Model):
     def create_ordered_item(self, delivery_group, item):
         price = item.get_unit_price()
         variant = item.variant.get_subtype_instance()
-        name = unicode(variant)
+        name = six.text_type(variant)
         ordered_item_class = self.get_ordered_item_class()
         ordered_item = ordered_item_class(delivery_group=delivery_group,
                                           product_variant=item.variant,

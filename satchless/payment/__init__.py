@@ -1,3 +1,4 @@
+import six
 class PaymentFailure(Exception):
     def __init__(self, error_message):
         super(PaymentFailure, self).__init__(error_message)
@@ -10,7 +11,7 @@ class PaymentsGatewayReceiptFormError(PaymentFailure):
                       __all__=form.non_form_errors)
         error_message = u', '.join(
             [u':'.join([key, u', '.join(msgs)])
-             for key, msgs in errors.iteritems()])
+             for key, msgs in six.iteritems(errors)])
         super(PaymentsGatewayReceiptFormError, self).__init__(error_message)
 
 

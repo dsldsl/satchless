@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 from django.db import connection
 
 qn = connection.ops.quote_name

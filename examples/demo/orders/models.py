@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 from django.db import models
 from satchless.order.models import Order, OrderManager
 from carts.models import DemoCart

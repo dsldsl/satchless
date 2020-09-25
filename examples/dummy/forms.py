@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 from django import forms
 from django.utils.translation import ugettext as _
 
@@ -24,8 +25,8 @@ class DummyVariantForm(BaseVariantForm):
 
     def clean(self):
         if not self._get_variant_queryset().exists():
-            raise forms.ValidationError, _("%(color)s variant of size %(size)s does not exist.") % \
-                    self.cleaned_data
+            raise forms.ValidationError(_("%(color)s variant of size %(size)s does not exist.") % \
+                    self.cleaned_data)
         return self.cleaned_data
 
     def get_variant(self):

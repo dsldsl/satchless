@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from __future__ import absolute_import
 from django.conf.urls import url
 from django.template.response import TemplateResponse
 
@@ -52,11 +53,11 @@ class MulitStepCheckoutApp(app.CheckoutApp):
         if not order or order.status != 'checkout':
             return self.redirect_order(order)
         groups = order.groups.all()
-        if filter(lambda g: not g.delivery_type, groups):
+        if [g for g in groups if not g.delivery_type]:
             return self.redirect('checkout', order_token=order.token)
         delivery_group_forms = forms.get_delivery_details_forms_for_groups(order.groups.all(),
                                                                            request.POST)
-        groups_with_forms = filter(lambda gf: gf[2], delivery_group_forms)
+        groups_with_forms = [gf for gf in delivery_group_forms if gf[2]]
         if len(groups_with_forms) == 0:
             # all forms are None, no details needed
             return self.redirect('payment-choice', order_token=order.token)

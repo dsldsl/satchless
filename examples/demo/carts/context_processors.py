@@ -1,5 +1,6 @@
+from __future__ import absolute_import
 from django.db import models
-from models import DemoCart
+from .models import DemoCart
 
 from satchless.cart.models import Cart
 

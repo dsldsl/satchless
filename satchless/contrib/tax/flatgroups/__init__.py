@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 from decimal import Decimal
 
 from ....pricing import Price, PriceRange, LinearTax, PricingHandler

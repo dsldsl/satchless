@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 from django.db.models.fields.related import ForeignKey
 from satchless.cart.models import Cart, CartItem
 
