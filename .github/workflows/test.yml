@@ -7,19 +7,22 @@ on:
 
 jobs:
   build:
-    name: Build ${{ matrix.label }}
+    name: Python ${{ matrix.python-version }}
     runs-on: ubuntu-latest
-    container: ${{ matrix.container }}
 
     strategy:
       matrix:
         include:
-          - container: python:2.7.15-alpine3.8
-            label: Python 2.7.15
-          - container: python:3.8.6-alpine3.12
-            label: Python 3.8.6
+          - python-version: 2.7.15
+          - python-version: 3.8.6
 
     steps:
+      - name: Setup python
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+          architecture: x64
+
       - name: Checkout repo
         uses: actions/checkout@v2
         with:
