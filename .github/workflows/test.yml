@@ -13,7 +13,7 @@ jobs:
     strategy:
       matrix:
         include:
-          - python-version: 2.7.15
+          - python-version: 2.7.18
           - python-version: 3.8.6
 
     steps:
