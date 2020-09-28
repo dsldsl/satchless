@@ -1,0 +1,31 @@
+name: Run tests
+
+on:
+  push:
+    branches: [ '*' ]
+    tags: [ '*' ]
+
+jobs:
+  build:
+    name: Build ${{ matrix.label }}
+    runs-on: ubuntu-latest
+    container: ${{ matrix.container }}
+
+    strategy:
+      matrix:
+        include:
+          - container: python:2.7.15-alpine3.8
+            label: Python 2.7.15
+          - container: python:3.8.6-alpine3.12
+            label: Python 3.8.6
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 1
+          submodules: recursive
+
+      - name: Run tests
+        run: |
+          python ./tests/runtests.py
