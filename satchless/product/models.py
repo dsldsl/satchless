@@ -24,14 +24,6 @@ class Product(Subtyped):
     def __unicode__(self):
         return self.slug
 
-    @models.permalink
-    def get_absolute_url(self, category=None):
-        categories = getattr(self, 'categories', None)
-        if categories and categories.count() > 0:
-            return categories.get_product_url(product=self, category=category)
-
-        return 'product:details', (self.pk, self.slug)
-
     def sanitize_quantity(self, quantity):
         """
         Returns sanitized quantity. By default it rounds the value to the

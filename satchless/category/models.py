@@ -38,12 +38,3 @@ class Category(MPTTModel):
 
     def __unicode__(self):
         return self.name
-
-    @models.permalink
-    def get_absolute_url(self):
-        return ('product:category-details',
-                (self.parents_slug_path(), self.slug))
-
-    def parents_slug_path(self):
-        parents = '/'.join(c.slug for c in self.get_ancestors())
-        return '%s/' % parents if parents else ''
