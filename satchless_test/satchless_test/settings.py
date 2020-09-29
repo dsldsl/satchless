@@ -41,8 +41,6 @@ INSTALLED_APPS = [
     'satchless.cart',
     'satchless.category',
     'satchless.checkout',
-    'satchless.contrib.checkout.multistep',
-    'satchless.contrib.checkout.singlestep',
     'satchless.contrib.delivery.simplepost',
     'satchless.contrib.payment.stripe_provider',
     'satchless.contrib.pricing.cache',
