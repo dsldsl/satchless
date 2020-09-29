@@ -135,8 +135,13 @@ class Cart(ViewsTestCase):
         self.assertEqual(cart.get_quantity(self.cockatoo_blue_d), Decimal('102'))
 
     def _get_or_create_cart_for_client(self, client=None, typ='cart'):
-        return cart_app.cart_model.objects.get_or_create(
-            pk=client.session[CART_SESSION_KEY % typ], typ=typ)[0]
+        try:
+            return cart_app.cart_model.objects.get(
+                pk=client.session[CART_SESSION_KEY % typ])[0]
+        except KeyError:
+            cart = cart_app.cart_model.objects.create(typ=typ)
+            client.session[CART_SESSION_KEY % typ] = cart.pk
+            return cart
 
     def test_signals(self):
         def modify_qty(sender, instance=None, variant=None, old_quantity=None,

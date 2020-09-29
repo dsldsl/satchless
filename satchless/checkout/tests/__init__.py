@@ -23,8 +23,13 @@ class BaseCheckoutAppTests(ViewsTestCase):
         return cart
 
     def _get_or_create_cart_for_client(self, client=None, typ='cart'):
-        return cart_app.cart_model.objects.get_or_create(
-            pk=client.session[CART_SESSION_KEY % typ], typ=typ)[0]
+        try:
+            return cart_app.cart_model.objects.get(
+                pk=client.session[CART_SESSION_KEY % typ])[0]
+        except KeyError:
+            cart = cart_app.cart_model.objects.create(typ=typ)
+            client.session[CART_SESSION_KEY % typ] = cart.pk
+            return cart
 
     def _get_or_create_order_for_client(self, client):
         order_pk = client.session.get('satchless_order', None)
@@ -72,17 +77,3 @@ class App(BaseCheckoutAppTests):
     def tearDown(self):
         #self._teardown_settings(self.original_settings, self.custom_settings)
         pricing_handler.pricing_queue = pricing_handler.PricingQueue(*self.original_handlers)
-
-    def test_reactive_order_view_redirects_to_checkout_for_correct_order(self):
-        order = self._create_order(self.anon_client)
-        order.set_status('payment-failed')
-
-        response = self._test_status(self.checkout_app.reverse('reactivate-order',
-                                                               kwargs={'order_token':
-                                                                       order.token}),
-                                     status_code=302,
-                                     client_instance=self.anon_client,
-                                     method='post')
-        self.assertRedirects(response,
-                             self.checkout_app.reverse('checkout',
-                                                       args=(order.token,)))
