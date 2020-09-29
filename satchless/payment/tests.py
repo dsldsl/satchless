@@ -53,13 +53,13 @@ class CreditCardNumberFieldTest(TestCase):
             '6011 0000 0000 0004',
             '6011 0000 0000 0012',
             # Diner's Club
-            '3000 0000 0000 04',
+            '3000 0000 0000 004',
             '2014 0000 0000 009',
             # JCB
             '3088 0000 0000 0009',
         ]
         for number in TEST_NUMBERS:
-            self.assertTrue(self.field.clean(number))
+            self.assertTrue(self.field.clean(number), 'Invalid number %s' % number)
 
     def test_invalid_number(self):
         INVALID_NUMBERS = [
