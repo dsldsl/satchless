@@ -11,7 +11,7 @@ class ProductPrice(models.Model):
         ('product', _("per product")),
         ('variant', _("per variant"))
     )
-    product = models.OneToOneField(Product)
+    product = models.OneToOneField(Product, on_delete=models.PROTECT)
     qty_mode = models.CharField(_("Quantity pricing mode"), max_length=10,
                                 choices=QTY_MODE_CHOICES, default='variant',
                                 help_text=_("In 'per variant' mode the unit "
