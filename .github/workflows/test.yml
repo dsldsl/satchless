@@ -15,12 +15,16 @@ jobs:
         include:
           - python-version: '2.7'
             django-version: '1.11'
+            requirements-file: requirements-test.py2.txt
           - python-version: '3.7'
             django-version: '1.11'
+            requirements-file: requirements-test.py3.txt
           - python-version: '3.8'
             django-version: '2.0'
+            requirements-file: requirements-test.py3.txt
           - python-version: '3.8'
             django-version: '3.0'
+            requirements-file: requirements-test.py3.txt
 
     steps:
       - name: Setup Python
@@ -38,7 +42,7 @@ jobs:
       - name: Install dependencies & project
         run: |
           pip install Django~=${{ matrix.django-version }}
-          pip install -r requirements-test.txt
+          pip install -r ${{ matrix.requirements-file }}
 
       - name: Create test database
         run: python ${GITHUB_WORKSPACE}/satchless_test/manage.py migrate
