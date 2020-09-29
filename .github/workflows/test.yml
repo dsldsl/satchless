@@ -42,4 +42,11 @@ jobs:
         run: python ${GITHUB_WORKSPACE}/satchless_test/manage.py migrate
 
       - name: Run tests
-        run: python ${GITHUB_WORKSPACE}/satchless_test/manage.py test
+        shell: bash
+        run: |
+          # Discover satchless apps with tests
+          apps_with_test_dirs=( $(find . | grep tests/__init__.py | sed 's/\/tests\/__init__\.py//g' | sed 's/\//./g' | sed 's/^\.\.//g') )
+          apps_with_test_py=( $(find . | grep 'test[a-z_0-9].py' | sed 's/\/test.*py//g' | sed 's/\//./g' | sed 's/^\.\.//g') )
+          apps_to_test=( "${apps_with_test_dirs[@]}" "${apps_with_test_py[@]}" )
+          # Run them
+          python ${GITHUB_WORKSPACE}/satchless_test/manage.py test ${apps_to_test[@]}
