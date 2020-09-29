@@ -41,7 +41,6 @@ class Pricing(TestCase):
         self.pricing_queue = PricingQueue(*self.TEST_PRICING_HANDLERS)
 
     def tearDown(self):
-        ProductPrice.objects.all().delete()
         self.pricing_queue = PricingQueue(*self.TEST_PRICING_HANDLERS)
 
     def test_price(self):
