@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
-from django.conf.urls import include, url
 from django.conf import settings
-from django.core.urlresolvers import reverse
 from django.http import HttpResponse
 from django.test import Client
 from satchless.cart.tests import TestCart
@@ -19,14 +17,6 @@ from ...util.tests import ViewsTestCase
 from ..app import CheckoutApp
 
 class BaseCheckoutAppTests(ViewsTestCase):
-    class MockUrls:
-        def __init__(self, checkout_app):
-            self.urlpatterns = [
-                url(r'^cart/', include(cart_app.urls)),
-                url(r'^checkout/', include(checkout_app.urls)),
-                url(r'^order/', include(order_app.urls)),
-            ]
-
     def _create_cart(self, client):
         cart = self._get_or_create_cart_for_client(client)
         cart.replace_item(self.macaw_blue, 1)
@@ -69,7 +59,6 @@ class MockCheckoutApp(CheckoutApp):
 
 class App(BaseCheckoutAppTests):
     checkout_app = MockCheckoutApp()
-    urls = BaseCheckoutAppTests.MockUrls(checkout_app)
 
     def setUp(self):
         self.anon_client = Client()
@@ -97,28 +86,3 @@ class App(BaseCheckoutAppTests):
         self.assertRedirects(response,
                              self.checkout_app.reverse('checkout',
                                                        args=(order.token,)))
-
-    def test_redirect_order(self):
-        def assertRedirects(response, path):
-            self.assertEqual(response.status_code, 302)
-            self.assertEqual(response['Location'], path)
-        order = self._create_order(self.anon_client)
-
-        order.set_status('payment-pending')
-        assertRedirects(self.checkout_app.redirect_order(order),
-                        self.checkout_app.reverse('confirmation',
-                                                  args=(order.token,)))
-
-        order.set_status('checkout')
-        assertRedirects(self.checkout_app.redirect_order(order),
-                        self.checkout_app.reverse('checkout',
-                                                  args=(order.token,)))
-
-        for status in ('payment-failed', 'delivery', 'payment-complete', 'cancelled'):
-            order.set_status(status)
-            response = self.checkout_app.redirect_order(order)
-            assertRedirects(response,
-                            reverse('order:details', args=(order.token,)))
-
-        assertRedirects(self.checkout_app.redirect_order(None),
-                        self.checkout_app.get_no_order_redirect_url())

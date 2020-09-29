@@ -4,7 +4,6 @@ from decimal import Decimal
 from django.db import models
 import os
 
-from django.conf.urls import include, url
 from django.conf import settings
 from django.test import Client
 
@@ -13,22 +12,15 @@ from ..product.tests import DeadParrot
 from ..product.tests.pricing import FiveZlotyPriceHandler
 from .app import order_app
 from .models import Order, OrderManager
-#from . import models
-#from . import urls
 from ..cart.tests import TestCart
 
 from ..util.tests import ViewsTestCase
 
 class TestOrder(Order):
-    cart = models.ForeignKey(TestCart, blank=True, null=True, related_name='orders')
+    cart = models.ForeignKey(TestCart, blank=True, null=True, related_name='orders', on_delete=models.PROTECT)
     objects = OrderManager()
 
 class OrderTest(ViewsTestCase):
-    class urls:
-        urlpatterns = [
-            url(r'^order/', include(order_app.urls)),
-        ]
-
     def setUp(self):
         order_app.order_model = TestOrder
         self.macaw = DeadParrot.objects.create(slug='macaw',
@@ -47,7 +39,6 @@ class OrderTest(ViewsTestCase):
                                                              looks_alive=True)
         self.cockatoo_blue_d = self.cockatoo.variants.create(color='blue',
                                                              looks_alive=False)
-        self.anon_client = Client()
 
         self.original_handlers = settings.SATCHLESS_PRICING_HANDLERS
         handler.pricing_queue = handler.PricingQueue(FiveZlotyPriceHandler)

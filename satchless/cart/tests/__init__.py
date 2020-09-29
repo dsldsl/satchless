@@ -38,7 +38,7 @@ class TestCart(Cart):
         return TestCartItem
 
 class TestCartItem(CartItem):
-    cart = dj_models.ForeignKey(TestCart, related_name='items')
+    cart = dj_models.ForeignKey(TestCart, related_name='items', on_delete=dj_models.PROTECT)
 
 add_to_cart_handler = AddToCartHandler('cart',
     addtocart_formclass=cart_forms.AddToCartForm,
