@@ -35,7 +35,7 @@ jobs:
           python setup.py install
 
       - name: Create test database
-        run: python satchless_test/manage.py migrate
+        run: cd ${GITHUB_WORKSPACE}/satchless_test && python manage.py migrate
 
       - name: Run tests
-        run: python satchless_test/manage.py test
+        run: cd ${GITHUB_WORKSPACE}/satchless_test && python manage.py test
