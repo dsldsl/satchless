@@ -138,20 +138,6 @@ class Cart(ViewsTestCase):
         return cart_app.cart_model.objects.get_or_create(
             pk=client.session[models.CART_SESSION_KEY % typ], typ=typ)[0]
 
-    def test_add_to_cart_form_on_product_view(self):
-        response = self._test_status(self.macaw.get_absolute_url(),
-                                     method='get', status_code=200)
-        self.assertTrue(isinstance(response.context['product'].cart_form,
-                        DeadParrotVariantForm))
-
-        zombie = ZombieParrot.objects.create(slug='zombie-parrot',
-                                             species='Zombie Parrot')
-        self.category_birds.products.add(zombie)
-        response = self._test_status(zombie.get_absolute_url(),
-                                     method='get', status_code=200)
-        self.assertTrue(isinstance(response.context['product'].cart_form,
-                        DeadParrotVariantForm))
-
     def test_signals(self):
         def modify_qty(sender, instance=None, variant=None, old_quantity=None,
                        new_quantity=None, result=None, **kwargs):

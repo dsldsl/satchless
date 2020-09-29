@@ -32,25 +32,16 @@ class BaseCheckoutAppTests(ViewsTestCase):
         cart.replace_item(self.macaw_blue, 1)
         return cart
 
-    def _get_or_create_cart_for_client(self, client, typ='cart'):
-        self._test_status(reverse('cart:details'),
-                          client_instance=client)
-        pk = client.session[CART_SESSION_KEY % typ]
-        return self.checkout_app.cart_model.objects.get(pk=pk,
-                                                        typ=typ)
+    def _get_or_create_cart_for_client(self, client=None, typ='cart'):
+        return cart_app.cart_model.objects.get_or_create(
+            pk=client.session[models.CART_SESSION_KEY % typ], typ=typ)[0]
 
     def _get_or_create_order_for_client(self, client):
-        self._test_status(self.checkout_app.reverse('prepare-order'),
-                          method='post', client_instance=client,
-                          status_code=302)
         order_pk = client.session.get('satchless_order', None)
         return self.checkout_app.order_model.objects.get(pk=order_pk)
 
     def _create_order(self, client):
         self._create_cart(client)
-        self._test_status(self.checkout_app.reverse('prepare-order'),
-                          method='post', client_instance=client,
-                          status_code=302)
         return self._get_order_from_session(client.session)
 
     def _get_order_from_session(self, session):
