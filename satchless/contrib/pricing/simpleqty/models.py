@@ -43,7 +43,7 @@ class VariantPriceOffset(models.Model):
     Holds optional price offset for a variant. Does not depend on quantity.
     """
     base_price = models.ForeignKey(ProductPrice, related_name='offsets', on_delete=models.PROTECT)
-    variant = models.OneToOneField(Variant)
+    variant = models.OneToOneField(Variant, on_delete=models.PROTECT)
     price_offset = models.DecimalField(_("unit price offset"), max_digits=12, decimal_places=4)
 
     def clean(self):
