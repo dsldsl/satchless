@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
-from django.conf.urls import patterns, include, url
+from django.conf.urls import include, url
 from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.http import HttpResponse
@@ -21,11 +21,11 @@ from ..app import CheckoutApp
 class BaseCheckoutAppTests(ViewsTestCase):
     class MockUrls:
         def __init__(self, checkout_app):
-            self.urlpatterns = patterns('',
+            self.urlpatterns = [
                 url(r'^cart/', include(cart_app.urls)),
                 url(r'^checkout/', include(checkout_app.urls)),
                 url(r'^order/', include(order_app.urls)),
-            )
+            ]
 
     def _create_cart(self, client):
         cart = self._get_or_create_cart_for_client(client)

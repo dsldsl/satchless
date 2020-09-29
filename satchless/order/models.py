@@ -31,11 +31,11 @@ class OrderManager(models.Manager):
                                               currency=cart.currency)
         else:
             order = instance
-            order.groups.all().delete()
-            try:
-                order.paymentvariant_set.all().delete()
-            except ObjectDoesNotExist:
-                pass
+        #     order.groups.all().delete()
+        #     try:
+        #         order.paymentvariant_set.all().delete()
+        #     except ObjectDoesNotExist:
+        #         pass
         groups = partitioner_queue.partition(cart)
         for group in groups:
             delivery_group = order.create_delivery_group()
@@ -177,7 +177,7 @@ class DeliveryGroup(models.Model):
     def subtotal(self, currency=None):
         currency = currency or self.order.currency
         return sum([i.price(currency=currency) for i in self.items.all()],
-                Price(0, currency=currency))    
+                Price(0, currency=currency))
 
     def delivery_price(self):
         try:

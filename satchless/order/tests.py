@@ -4,9 +4,8 @@ from decimal import Decimal
 from django.db import models
 import os
 
-from django.conf.urls import patterns, include, url
+from django.conf.urls import include, url
 from django.conf import settings
-from django.core.urlresolvers import reverse
 from django.test import Client
 
 from ..pricing import handler
@@ -26,9 +25,9 @@ class TestOrder(Order):
 
 class OrderTest(ViewsTestCase):
     class urls:
-        urlpatterns = patterns('',
+        urlpatterns = [
             url(r'^order/', include(order_app.urls)),
-        )
+        ]
 
     def setUp(self):
         order_app.order_model = TestOrder
@@ -82,12 +81,3 @@ class OrderTest(ViewsTestCase):
         self.assertEqual(set(cart.items.values_list('variant', 'quantity')),
                          order_items)
 
-    def test_order_view(self):
-        cart = TestCart.objects.create(typ='satchless.test_cart')
-        cart.replace_item(self.macaw_blue, 1)
-        cart.replace_item(self.macaw_blue_fake, Decimal('2.45'))
-        cart.replace_item(self.cockatoo_white_a, Decimal('2.45'))
-
-        order = order_app.order_model.objects.get_from_cart(cart)
-        self._test_GET_status(reverse('order:details',
-                                      args=(order.token,)))

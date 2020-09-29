@@ -12,7 +12,7 @@ from .models import ProductPrice
 
 class Pricing(TestCase):
     TEST_PRICING_HANDLERS = [
-        'satchless.contrib.pricing.simpleqty.SimpleQtyPricingHandler',
+        'satchless.contrib.pricing.simpleqty.handler.SimpleQtyPricingHandler',
     ]
 
     def setUp(self):
@@ -156,10 +156,10 @@ class Pricing(TestCase):
         item_macaw_blue_a = cart.items.get(variant=self.macaw_blue_a)
         item_macaw_blue_d = cart.items.get(variant=self.macaw_blue_d)
 
-        self.assertEqual(item_macaw_blue_d.get_unit_price(currency='BTC'),
-                         Price(Decimal('10.0'), currency='BTC'))
         self.assertEqual(item_macaw_blue_a.get_unit_price(currency='BTC'),
                          Price(Decimal('12.0'), currency='BTC'))
+        self.assertEqual(item_macaw_blue_d.get_unit_price(currency='BTC'),
+                         Price(Decimal('10.0'), currency='BTC'))
         cart.add_item(self.macaw_blue_a, 1)
         cart.add_item(self.macaw_blue_d, 1)
         item_macaw_blue_a = cart.items.get(variant=self.macaw_blue_a)

@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
 from decimal import Decimal
-from django.conf.urls import patterns, include, url
 from django.db import models as dj_models
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ObjectDoesNotExist
@@ -46,14 +45,6 @@ add_to_cart_handler = AddToCartHandler('cart',
     cart_class=TestCart)
 
 class Cart(ViewsTestCase):
-    class urls:
-        urlpatterns = patterns('',
-            url(r'^cart/', include(cart_app.urls)),
-            url(r'^products/', include(product_app.urls)),
-            url(r'^checkout/', include(FakeCheckoutApp().urls))
-        )
-
-
     def setUp(self):
         cart_app.cart_model = TestCart
         self.category_birds = Category.objects.create(name='birds',
@@ -144,11 +135,8 @@ class Cart(ViewsTestCase):
         self.assertEqual(cart.get_quantity(self.cockatoo_blue_d), Decimal('102'))
 
     def _get_or_create_cart_for_client(self, client=None, typ='cart'):
-        client = client or self.client
-        self._test_status(cart_app.reverse('details'), client_instance=client)
-        return cart_app.cart_model.objects.get(pk=client.session[models.CART_SESSION_KEY % typ],
-                                       typ=typ)
-
+        return cart_app.cart_model.objects.get_or_create(
+            pk=client.session[models.CART_SESSION_KEY % typ], typ=typ)[0]
 
     def test_add_to_cart_form_on_product_view(self):
         response = self._test_status(self.macaw.get_absolute_url(),
@@ -163,76 +151,6 @@ class Cart(ViewsTestCase):
                                      method='get', status_code=200)
         self.assertTrue(isinstance(response.context['product'].cart_form,
                         DeadParrotVariantForm))
-
-    def _test_add_by_view(self, client):
-        cart = self._get_or_create_cart_for_client(client)
-        self._test_status(cart_app.reverse('details'),
-                          client_instance=client, status_code=200)
-        self._test_status(self.macaw.get_absolute_url(),
-                          method='post',
-                          data={'typ': 'cart',
-                                'color': self.macaw_blue_fake.color,
-                                'looks_alive': self.macaw_blue_fake.looks_alive,
-                                'quantity': 2},
-                          client_instance=client,
-                          status_code=302)
-        self.assertEqual(cart.items.count(), 1)
-        cart_item = cart.items.get()
-        self.assertEqual(cart_item.quantity, 2)
-        self.assertEqual(self.macaw_blue_fake,
-                         cart_item.variant.get_subtype_instance())
-
-    def test_remove_item_by_view(self):
-        cart = self._get_or_create_cart_for_client(self.client)
-        cart.replace_item(self.macaw_blue_fake, Decimal('2.45'))
-        remove_item_url = cart_app.reverse('remove-item', args=(cart.items.get().id,))
-        response = self._test_status(remove_item_url, method='post',
-                                     status_code=302, client_instance=self.client)
-        self.assertRedirects(response, cart_app.reverse('details'))
-
-    def test_cart_view_with_item(self):
-        cart = self._get_or_create_cart_for_client(self.client)
-        cart.replace_item(self.macaw_blue_fake, Decimal('2.45'))
-        self._test_status(cart_app.reverse('details'),
-                          client_instance=self.client, status_code=200)
-
-    def test_cart_view_updates_item_quantity(self):
-        cart = self._get_or_create_cart_for_client(self.client)
-        cart.replace_item(self.macaw_blue_fake, Decimal(1))
-        response = self._test_status(cart_app.reverse('details'),
-                                    client_instance=self.client, status_code=200)
-        cart_item_form = response.context['cart_item_forms'][0]
-        data = {
-            'quantity': 2
-        }
-        data = dict((cart_item_form.add_prefix(key), value) for (key, value) in data.items())
-        self._test_status(cart_app.reverse('details'), data=data,
-                          method='post', status_code=302,
-                          client_instance=self.client)
-        self.assertEqual(cart.items.count(), 1)
-        self.assertEqual(cart.items.all()[0].quantity, 2)
-
-    def test_add_by_view_for_anonymous(self):
-        cli_anon = Client()
-        self._test_add_by_view(cli_anon)
-
-    def test_add_by_view(self):
-        cli_user1 = Client()
-        self.assertTrue(cli_user1.login(username="testuser", password=u"pasło"))
-        self._test_add_by_view(cli_user1)
-
-    def test_add_to_cart_form_handles_incorrect_data(self):
-        cli_anon = Client()
-        response = self._test_status(self.macaw.get_absolute_url(),
-                                     method='post',
-                                     data={'typ': 'cart',
-                                           'color': 'blue',
-                                           'looks_alive': 1,
-                                           'quantity': 'alkjl'},
-                                     client_instance=cli_anon,
-                                     status_code=200)
-        errors = response.context['product'].cart_form.errors
-        self.assertTrue('quantity' in errors)
 
     def test_signals(self):
         def modify_qty(sender, instance=None, variant=None, old_quantity=None,

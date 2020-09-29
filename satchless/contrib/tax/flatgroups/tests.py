@@ -38,7 +38,7 @@ class ParrotTaxTest(TestCase):
         self.vat8.products.add(self.macaw)
         # set the pricing pipeline
         self.pricing_queue = PricingQueue(
-            'satchless.contrib.pricing.simpleqty.SimpleQtyPricingHandler',
+            'satchless.contrib.pricing.simpleqty.handler.SimpleQtyPricingHandler',
             'satchless.contrib.tax.flatgroups.FlatGroupPricingHandler')
 
     def test_nodefault(self):

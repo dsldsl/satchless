@@ -64,7 +64,7 @@ class CheckoutTest(BaseCheckoutAppTests):
             )
         }
         self.original_settings = self._setup_settings(self.custom_settings)
-        order_handler.delivery_queue = order_handler.DeliveryQueue('satchless.contrib.delivery.simplepost.PostDeliveryProvider')
+        order_handler.delivery_queue = order_handler.DeliveryQueue('satchless.contrib.delivery.simplepost.provider.PostDeliveryProvider')
         order_handler.payment_queue = order_handler.PaymentQueue(TestPaymentProviderWithConfirmation)
         order_handler.partitioner_queue = order_handler.PartitionerQueue('satchless.contrib.order.partitioner.simple.SimplePartitioner')
 

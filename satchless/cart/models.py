@@ -173,8 +173,9 @@ class CartItem(models.Model):
         from ..pricing.handler import pricing_queue
         variant = self.variant.get_subtype_instance()
         currency = currency or self.cart.currency
-        return pricing_queue.get_variant_price(variant, currency,
-                quantity=self.quantity, cart=self.cart, cartitem=self, **kwargs)
+        return pricing_queue.get_variant_price(
+            variant, currency, quantity=self.quantity, cart=self.cart,
+            cartitem=self, **kwargs)
 
     def price(self, currency=None, **kwargs):
         return self.get_unit_price(currency=currency, **kwargs) * self.quantity

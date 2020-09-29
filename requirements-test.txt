@@ -3,6 +3,5 @@ django-js-asset==1.2.2
 django-mptt==0.9.1
 funcsigs==1.0.2
 mock==3.0.5
-Pillow==6.2.2
 pytz==2020.1
 six==1.15.0

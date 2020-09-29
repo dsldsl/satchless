@@ -42,7 +42,6 @@ INSTALLED_APPS = [
     'satchless.cart',
     'satchless.category',
     'satchless.checkout',
-    'satchless.contact',
     'satchless.contrib.checkout.multistep',
     'satchless.contrib.checkout.singlestep',
     'satchless.contrib.delivery.simplepost',
@@ -54,7 +53,6 @@ INSTALLED_APPS = [
     'satchless.payment',
     'satchless.pricing',
     'satchless.product',
-    'satchless.satchless_image',
 ]
 
 MIDDLEWARE = [
@@ -94,8 +92,8 @@ WSGI_APPLICATION = 'satchless_test.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, '.db.sqlite3'),
-        'TEST_NAME': os.path.join(BASE_DIR, '.db.sqlite3'),
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'TEST_NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
 
@@ -142,14 +140,14 @@ STATIC_URL = '/static/'
 SATCHLESS_DEFAULT_CURRENCY = 'USD'
 
 SATCHLESS_PRICING_HANDLERS = [
-    'satchless.contrib.pricing.simpleqty.SimpleQtyPricingHandler',
+    'satchless.contrib.pricing.simpleqty.handler.SimpleQtyPricingHandler',
     'satchless.contrib.pricing.cache.PricingCacheHandler',
     'satchless.contrib.pricing.field.ProductFieldGetter',
     'satchless.contrib.pricing.field.VariantFieldGetter',
 ]
 SATCHLESS_ORDER_PARTITIONERS = [
-    'satchless.contrib.order.partitioner.simple',
+    'satchless.contrib.order.partitioner.simple.SimplePartitioner',
 ]
 SATCHLESS_DELIVERY_PROVIDERS = [
-    'satchless.contrib.delivery.simplepost.PostDeliveryProvider',
+    'satchless.contrib.delivery.simplepost.provider.PostDeliveryProvider',
 ]
