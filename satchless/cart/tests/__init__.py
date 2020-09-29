@@ -7,7 +7,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse
 from django.test import Client
 import os
-from ...cart.models import Cart, CartItem
+from ...cart.models import Cart, CartItem, CART_SESSION_KEY
 from ...cart.handler import AddToCartHandler
 from ...cart import forms as cart_forms
 
@@ -136,7 +136,7 @@ class Cart(ViewsTestCase):
 
     def _get_or_create_cart_for_client(self, client=None, typ='cart'):
         return cart_app.cart_model.objects.get_or_create(
-            pk=client.session[models.CART_SESSION_KEY % typ], typ=typ)[0]
+            pk=client.session[CART_SESSION_KEY % typ], typ=typ)[0]
 
     def test_signals(self):
         def modify_qty(sender, instance=None, variant=None, old_quantity=None,

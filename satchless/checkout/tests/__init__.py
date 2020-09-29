@@ -34,7 +34,7 @@ class BaseCheckoutAppTests(ViewsTestCase):
 
     def _get_or_create_cart_for_client(self, client=None, typ='cart'):
         return cart_app.cart_model.objects.get_or_create(
-            pk=client.session[models.CART_SESSION_KEY % typ], typ=typ)[0]
+            pk=client.session[CART_SESSION_KEY % typ], typ=typ)[0]
 
     def _get_or_create_order_for_client(self, client):
         order_pk = client.session.get('satchless_order', None)
