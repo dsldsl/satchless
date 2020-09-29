@@ -2,10 +2,10 @@ from __future__ import absolute_import
 from decimal import Decimal
 
 from ....pricing import Price, PriceRange, LinearTax, PricingHandler
-from . import models
 
 class FlatGroupPricingHandler(PricingHandler):
     def _tax_product(self, product, price):
+        from . import models
         try:
             group = product.taxgroup_set.get()
         except models.TaxGroup.DoesNotExist:

@@ -3,8 +3,7 @@ import datetime
 import re
 
 from django.conf import settings
-from django.forms.extras.widgets import _parse_date_fmt, RE_DATE
-from django.forms.widgets import Widget, Select, TextInput
+from django.forms.widgets import SelectDateWidget, Widget, Select, TextInput
 from django.utils import datetime_safe
 from django.utils.formats import get_format
 from django.utils.safestring import mark_safe
@@ -12,6 +11,8 @@ from django.utils.translation import ugettext_lazy as _
 import time
 import six
 from six.moves import range
+
+RE_DATE = re.compile(r'(\d{4})-(\d\d?)-(\d\d?)$')
 
 class SelectMonthWidget(Widget):
     """
@@ -59,7 +60,7 @@ class SelectMonthWidget(Widget):
                                         choices, none_value=(0, _('Month')))
 
         output = []
-        for field in _parse_date_fmt():
+        for field in SelectDateWidget._parse_date_fmt():
             if field == 'year':
                 output.append(year_html)
             elif field == 'month':
@@ -68,7 +69,7 @@ class SelectMonthWidget(Widget):
 
     def id_for_label(self, id_):
         first_select = None
-        field_list = _parse_date_fmt()
+        field_list = SelectDateWidget._parse_date_fmt()
         if field_list:
             first_select = field_list[0]
         if first_select is not None:

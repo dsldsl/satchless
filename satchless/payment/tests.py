@@ -14,9 +14,6 @@ from . import fields
 from . import models
 from . import PaymentProvider, PaymentType
 
-class TestPaymentVariant(models.PaymentVariant):
-    pass
-
 
 class TestPaymentProvider(PaymentProvider):
     def enum_types(self, order=None, customer=None):
@@ -27,7 +24,7 @@ class TestPaymentProvider(PaymentProvider):
 
     def create_variant(self, order, form, typ=None):
         typ = typ or order.payment_type
-        payment_variant = TestPaymentVariant.objects.create(order=order,
+        payment_variant = models.PaymentVariant.objects.create(order=order,
                                                             price=0,
                                                             amount=0,
                                                             name='test')

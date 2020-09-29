@@ -17,7 +17,7 @@ jobs:
           - python-version: 3.8.6
 
     steps:
-      - name: Setup python
+      - name: Setup Python
         uses: actions/setup-python@v2
         with:
           python-version: ${{ matrix.python-version }}
@@ -29,9 +29,15 @@ jobs:
           fetch-depth: 1
           submodules: recursive
 
+      - name: Install dependencies & project
+        run: |
+          pip install -r requirements-test.txt
+          python setup.py install
+
+      - name: Create test database
+        run: python satchless_test/manage.py migrate
+
       - name: Run tests
         env:
           DJANGO_SETTINGS_MODULE: settings
-        run: |
-          python setup.py install
-          python ./tests/runtests.py
+        run: python satchless_test/manage.py test
