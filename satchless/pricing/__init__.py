@@ -50,6 +50,14 @@ class Price(object):
     def __ne__(self, other):
         return not self == other
 
+    def __gt__(self, other):
+        if not isinstance(other, Price):
+            raise TypeError('Cannot compare Price to %s' % other)
+        if self.currency != other.currency:
+            raise ValueError('Cannot compare Prices in %s and %s' %
+                             (self.currency, other.currency))
+        return self.net > other.net
+
     def __mul__(self, other):
         price_net = self.net * other
         price_gross = self.gross * other
