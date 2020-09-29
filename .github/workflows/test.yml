@@ -37,10 +37,9 @@ jobs:
         run: |
           pip install Django~=${{ matrix.django-version }}
           pip install -r requirements-test.txt
-          python setup.py develop
 
       - name: Create test database
-        run: cd ${GITHUB_WORKSPACE}/satchless_test && python manage.py migrate
+        run: python ${GITHUB_WORKSPACE}/satchless_test/manage.py migrate
 
       - name: Run tests
-        run: cd ${GITHUB_WORKSPACE}/satchless_test && python manage.py test ../satchless
+        run: python ${GITHUB_WORKSPACE}/satchless_test/manage.py test
