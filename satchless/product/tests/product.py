@@ -8,14 +8,13 @@ from django.core.urlresolvers import reverse
 #from django.db import connection, reset_queries
 from django.test import TestCase, Client
 
-from ...util.tests import ViewsTestCase
 from ..app import product_app
 from ..forms import FormRegistry, variant_form_for_product
 from ..models import Variant, Product
 
 from . import DeadParrot, DeadParrotVariant, ZombieParrot, DeadParrotVariantForm
 
-__all__ = ['Models', 'Registry', 'Views']
+__all__ = ['Models', 'Registry']
 
 class urls:
     urlpatterns = [
@@ -80,28 +79,3 @@ class Registry(TestCase):
                          DeadParrotVariantForm)
         self.assertEqual(registry.get_handler(ZombieParrot),
                          DeadParrotVariantForm)
-
-
-class Views(ViewsTestCase):
-    urls = urls
-
-    def setUp(self):
-        self.macaw = DeadParrot.objects.create(slug='macaw',
-                species='Hyacinth Macaw')
-        self.client_test = Client()
-        self.ORIGINAL_TEMPLATE_DIRS = settings.TEMPLATE_DIRS
-        test_dir = os.path.dirname(__file__)
-        self.custom_settings = {
-            'TEMPLATE_DIRS': [os.path.join(test_dir, '..', 'templates'),
-                              os.path.join(test_dir, 'templates')]
-        }
-        self.original_settings = self._setup_settings(self.custom_settings)
-
-    def tearDown(self):
-        self._teardown_settings(self.original_settings,
-                                self.custom_settings)
-
-    def test_product_details_view(self):
-        response = self.client.get(reverse('product:details',
-                                           args=(self.macaw.pk, self.macaw.slug)))
-        self.assertEqual(response.status_code, 200)
