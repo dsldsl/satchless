@@ -43,4 +43,4 @@ jobs:
 
       - name: Run tests
         shell: bash
-        run: run-tests.sh
+        run: ./run-tests.sh
