@@ -14,7 +14,7 @@ class StockedDeadParrotVariant(Variant, VariantStockLevelMixin):
         ('red', 'red'),
         ('green', 'green'),
     )
-    product = models.ForeignKey(StockedDeadParrot, related_name='variants')
+    product = models.ForeignKey(StockedDeadParrot, related_name='variants', on_delete=models.PROTECT)
     color = models.CharField(max_length=10, choices=COLOR_CHOICES)
     looks_alive = models.BooleanField(default=False)
 

@@ -28,18 +28,6 @@ class Price(object):
         return ("Price(net=%.10g, gross=%.10g, currency='%s')" %
                 (self.net, self.gross, self.currency))
 
-    def __cmp__(self, other):
-        if not isinstance(other, Price):
-            raise TypeError('Cannot compare Price to %s' % other)
-        if self.currency != other.currency:
-            raise ValueError('Cannot compare Prices in %s and %s' %
-                             (self.currency, other.currency))
-        if self.net < other.net:
-            return -1
-        elif self.net > other.net:
-            return 1
-        return 0
-
     def __eq__(self, other):
         if isinstance(other, Price):
             return (self.gross == other.gross and
@@ -48,7 +36,7 @@ class Price(object):
         return False
 
     def __ne__(self, other):
-        return not self == other
+        return not (self == other)
 
     def __gt__(self, other):
         if not isinstance(other, Price):
@@ -57,6 +45,30 @@ class Price(object):
             raise ValueError('Cannot compare Prices in %s and %s' %
                              (self.currency, other.currency))
         return self.net > other.net
+
+    def __gte__(self, other):
+        if not isinstance(other, Price):
+            raise TypeError('Cannot compare Price to %s' % other)
+        if self.currency != other.currency:
+            raise ValueError('Cannot compare Prices in %s and %s' %
+                             (self.currency, other.currency))
+        return self.net >= other.net
+
+    def __lt__(self, other):
+        if not isinstance(other, Price):
+            raise TypeError('Cannot compare Price to %s' % other)
+        if self.currency != other.currency:
+            raise ValueError('Cannot compare Prices in %s and %s' %
+                             (self.currency, other.currency))
+        return self.net < other.net
+
+    def _lte__(self, other):
+        if not isinstance(other, Price):
+            raise TypeError('Cannot compare Price to %s' % other)
+        if self.currency != other.currency:
+            raise ValueError('Cannot compare Prices in %s and %s' %
+                             (self.currency, other.currency))
+        return self.net <= other.net
 
     def __mul__(self, other):
         price_net = self.net * other
