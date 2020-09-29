@@ -47,8 +47,6 @@ INSTALLED_APPS = [
     'satchless.contrib.payment.stripe_provider',
     'satchless.contrib.pricing.cache',
     'satchless.contrib.pricing.simpleqty',
-    'satchless.contrib.stock.singlestore',
-    'satchless.contrib.stock.singlestore.tests',
     'satchless.contrib.tax.flatgroups',
     'satchless.delivery',
     'satchless.order',
