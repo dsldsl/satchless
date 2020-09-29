@@ -46,7 +46,7 @@ class Price(object):
                              (self.currency, other.currency))
         return self.net > other.net
 
-    def __gte__(self, other):
+    def __ge__(self, other):
         if not isinstance(other, Price):
             raise TypeError('Cannot compare Price to %s' % other)
         if self.currency != other.currency:
@@ -62,7 +62,7 @@ class Price(object):
                              (self.currency, other.currency))
         return self.net < other.net
 
-    def __lte__(self, other):
+    def __le__(self, other):
         if not isinstance(other, Price):
             raise TypeError('Cannot compare Price to %s' % other)
         if self.currency != other.currency:

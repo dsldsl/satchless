@@ -84,7 +84,13 @@ class PriceRangeTest(TestCase):
     def test_valid_membership(self):
         self.assertTrue(self.p1 in self.pr1)
         self.assertTrue(self.p2 in self.pr1)
+        self.assertFalse(self.p1 in self.pr2)
+        self.assertFalse(self.p2 in self.pr2)
+
+        self.assertTrue(self.p3 in self.pr2)
+        self.assertTrue(self.p4 in self.pr2)
         self.assertFalse(self.p3 in self.pr1)
+        self.assertFalse(self.p4 in self.pr1)
 
     def test_invalid_membership(self):
         self.assertRaises(TypeError, lambda: 15 in self.pr1)
