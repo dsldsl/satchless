@@ -11,4 +11,4 @@ apps_with_test_py=( $(find . | grep 'test[a-z_0-9].py$' | sed 's/\/test.*py//g' 
 apps_to_test=( "${apps_with_test_dirs[@]}" "${apps_with_test_py[@]}" )
 
 echo "Running tests for ${apps_to_test[@]}"
-python satchless_test/manage.py test ${apps_to_test[@]}
+exec python satchless_test/manage.py test ${apps_to_test[@]}
