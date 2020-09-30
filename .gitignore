@@ -11,3 +11,4 @@ Pipfile*
 dist/
 *.egg-info
 /satchless_test/db.sqlite3
+.coverage

@@ -22,6 +22,7 @@ jobs:
           - python-version: '3.8'
             django-version: '2.0'
             requirements-file: requirements-test.py3.txt
+            coverage: true
           - python-version: '3.8'
             django-version: '3.0'
             requirements-file: requirements-test.py3.txt
@@ -48,4 +49,7 @@ jobs:
         run: python ${GITHUB_WORKSPACE}/satchless_test/manage.py migrate
 
       - name: Run tests
+        env:
+          COVERAGE: ${{ matrix.coverage }}
+          COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
         run: ./run-tests.sh
