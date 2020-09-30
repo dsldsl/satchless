@@ -10,10 +10,10 @@ apps_with_test_py=( $(find . | grep 'test[a-z_0-9].py$' | sed 's/\/test.*py//g' 
 apps_to_test=( "${apps_with_test_dirs[@]}" "${apps_with_test_py[@]}" )
 
 echo "Running tests for ${apps_to_test[@]}"
-if [[ ! -z ${COVERAGE:-} ]]
+if [[ -z ${COVERAGE:-} ]]
 then
-  prefix="coverage run --source=satchless"
+  exec python satchless_test/manage.py test ${apps_to_test[@]}
 else
-  prefix="python"
+  exec coverage run --source=satchless satchless_test/manage.py test ${apps_to_test[@]}
+  coveralls
 fi
-exec $prefix satchless_test/manage.py test ${apps_to_test[@]}
