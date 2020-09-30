@@ -14,6 +14,6 @@ if [[ -z ${COVERAGE:-} ]]
 then
   python satchless_test/manage.py test ${apps_to_test[@]}
 else
-  coverage run --source=satchless satchless_test/manage.py test ${apps_to_test[@]}
+  coverage run satchless_test/manage.py test ${apps_to_test[@]}
   coveralls
 fi

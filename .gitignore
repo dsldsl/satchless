@@ -1,6 +1,7 @@
 .*
 !.github
 !.gitignore
+!.coveragerc
 *.py[co]
 *~
 doc/_build
