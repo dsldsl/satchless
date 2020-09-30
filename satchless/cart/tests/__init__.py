@@ -8,8 +8,6 @@ from django.http import HttpResponse
 from django.test import Client
 import os
 from ...cart.models import Cart, CartItem, CART_SESSION_KEY
-from ...cart.handler import AddToCartHandler
-from ...cart import forms as cart_forms
 
 from ...category.app import product_app
 from ...category.models import Category
@@ -40,9 +38,6 @@ class TestCart(Cart):
 class TestCartItem(CartItem):
     cart = dj_models.ForeignKey(TestCart, related_name='items', on_delete=dj_models.PROTECT)
 
-add_to_cart_handler = AddToCartHandler('cart',
-    addtocart_formclass=cart_forms.AddToCartForm,
-    cart_class=TestCart)
 
 class Cart(BaseTestCase):
     def setUp(self):
@@ -74,24 +69,10 @@ class Cart(BaseTestCase):
         self.category_birds.products.add(self.macaw)
         self.user1.save()
 
-        test_dir = os.path.dirname(__file__)
-        self.custom_settings = {
-            'SATCHLESS_DEFAULT_CURRENCY': "PLN",
-            'SATCHLESS_PRODUCT_VIEW_HANDLERS': (
-                'satchless.cart.tests.add_to_cart_handler',
-            ),
-            'TEMPLATE_DIRS': [os.path.join(test_dir, '..', '..',
-                                           'category', 'templates'),
-                              os.path.join(test_dir, '..', 'templates'),
-                              os.path.join(test_dir, 'templates')]
-        }
-        self.original_settings = self._setup_settings(self.custom_settings)
         pricing_handler.pricing_queue = pricing_handler.PricingQueue(FiveZlotyPriceHandler)
         handler.init_queue()
 
     def tearDown(self):
-        self._teardown_settings(self.original_settings,
-                                self.custom_settings)
         handler.init_queue()
 
     def test_basic_cart_ops(self):
