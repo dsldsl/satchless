@@ -42,19 +42,9 @@ class OrderTest(BaseTestCase):
 
         self.original_handlers = settings.SATCHLESS_PRICING_HANDLERS
         handler.pricing_queue = handler.PricingQueue(FiveZlotyPriceHandler)
-        app_dir = os.path.dirname(__file__)
-        self.custom_settings = {
-            'SATCHLESS_PRODUCT_VIEW_HANDLERS': ('satchless.cart.handler.add_to_cart_handler',),
-            'TEMPLATE_DIRS': [os.path.join(app_dir, 'templates'),
-                              os.path.join(app_dir, '..', 'product',
-                                           'tests', 'templates')]
-        }
-        self.original_settings = self._setup_settings(self.custom_settings)
 
     def tearDown(self):
         handler.pricing_queue = handler.PricingQueue(*self.original_handlers)
-        self._teardown_settings(self.original_settings,
-                                self.custom_settings)
 
     def test_order_is_updated_when_cart_content_changes(self):
         cart = TestCart.objects.create(typ='satchless.test_cart')

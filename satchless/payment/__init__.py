@@ -1,4 +1,5 @@
 import six
+
 class PaymentFailure(Exception):
     def __init__(self, error_message):
         super(PaymentFailure, self).__init__(error_message)
@@ -13,14 +14,6 @@ class PaymentsGatewayReceiptFormError(PaymentFailure):
             [u':'.join([key, u', '.join(msgs)])
              for key, msgs in six.iteritems(errors)])
         super(PaymentsGatewayReceiptFormError, self).__init__(error_message)
-
-
-class ConfirmationFormNeeded(Exception):
-    def __init__(self, form=None, action='', method='post'):
-        super(ConfirmationFormNeeded, self).__init__()
-        self.form = form
-        self.action = action
-        self.method = method
 
 
 class PaymentType(object):
@@ -66,7 +59,5 @@ class PaymentProvider(object):
     def confirm(self, order, typ=None):
         '''
         Confirm the payment, raise PaymentFailure on errors.
-        Backends which need a confirmation form should raise
-        ConfirmationFormNeeded.
         '''
         raise NotImplementedError()

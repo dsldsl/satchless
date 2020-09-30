@@ -11,7 +11,6 @@ from ...cart.models import Cart, CartItem, CART_SESSION_KEY
 
 from ...category.models import Category
 from ...pricing import handler as pricing_handler
-from ...product import handler
 from ...product.tests.pricing import FiveZlotyPriceHandler
 from ...product.tests import (DeadParrot, ZombieParrot, DeadParrotVariantForm)
 from ...util.tests import BaseTestCase
@@ -62,10 +61,6 @@ class Cart(BaseTestCase):
         self.user1.save()
 
         pricing_handler.pricing_queue = pricing_handler.PricingQueue(FiveZlotyPriceHandler)
-        handler.init_queue()
-
-    def tearDown(self):
-        handler.init_queue()
 
     def test_basic_cart_ops(self):
         cart = TestCart.objects.create(typ='satchless.test_cart')

@@ -10,7 +10,7 @@ from ..order import handler
 from ..order.exceptions import EmptyCart
 from ..order.models import Order
 from ..order.signals import order_pre_confirm
-from ..payment import PaymentFailure, ConfirmationFormNeeded
+from ..payment import PaymentFailure
 from ..core.app import SatchlessApp
 
 class CheckoutApp(SatchlessApp):
