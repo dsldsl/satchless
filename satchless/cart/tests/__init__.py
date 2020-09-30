@@ -1,12 +1,16 @@
 # -*- coding: utf-8 -*-
+
 from __future__ import absolute_import
+
+import os
+import six
+
 from decimal import Decimal
 from django.db import models as dj_models
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse
 from django.test import Client
-import os
 from ...cart.models import Cart, CartItem, CART_SESSION_KEY
 
 from ...category.models import Category
@@ -61,6 +65,13 @@ class Cart(BaseTestCase):
         self.user1.save()
 
         pricing_handler.pricing_queue = pricing_handler.PricingQueue(FiveZlotyPriceHandler)
+
+    def test_unicode(self):
+        cart1 = TestCart(typ='satchless.test_cart1')
+        self.assertEquals(six.text_type(cart1), 'satchless.test_cart1')
+
+        cart2 = TestCart(typ='satchless.test_cart2', owner=self.user1)
+        self.assertEquals(six.text_type(cart2), 'satchless.test_cart2 of testuser')
 
     def test_basic_cart_ops(self):
         cart = TestCart.objects.create(typ='satchless.test_cart')
