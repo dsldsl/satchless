@@ -5,19 +5,7 @@ from mptt.models import MPTTModel
 
 from ..product.models import Product
 
-__all__ = ('Category', 'CategoryManager')
-
-class CategoryManager(models.Manager):
-    def get_product_url(self, product, category):
-        if not category:
-            if not product.categories.exists():
-                raise ValueError('Cannot generate url for product'
-                                 ' without categories')
-            category = product.categories.all()[0]
-        return ('product:details',
-                ('%s%s/' % (category.parents_slug_path(),
-                            category.slug),
-                 product.slug))
+__all__ = ('Category', )
 
 
 class Category(MPTTModel):
@@ -30,7 +18,6 @@ class Category(MPTTModel):
                                related_name='children')
     products = models.ManyToManyField(Product, related_name='categories',
                                       blank=True)
-    objects = CategoryManager()
 
     class Meta:
         verbose_name = _("category")

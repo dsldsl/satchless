@@ -18,3 +18,6 @@ class Models(TestCase):
                                              parent=self.animals)
         self.parrots = Category.objects.create(slug='parrots', name=u'Parrorts',
                                                parent=self.birds)
+
+    def test_unicode(self):
+        self.assertEquals(unicode(self.animals), u'Animals')
