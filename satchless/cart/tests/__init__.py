@@ -18,7 +18,7 @@ from ...pricing import handler as pricing_handler
 from ...product import handler
 from ...product.tests.pricing import FiveZlotyPriceHandler
 from ...product.tests import (DeadParrot, ZombieParrot, DeadParrotVariantForm)
-from ...util.tests import ViewsTestCase
+from ...util.tests import BaseTestCase
 
 from ..app import cart_app
 from .. import models
@@ -44,7 +44,7 @@ add_to_cart_handler = AddToCartHandler('cart',
     addtocart_formclass=cart_forms.AddToCartForm,
     cart_class=TestCart)
 
-class Cart(ViewsTestCase):
+class Cart(BaseTestCase):
     def setUp(self):
         cart_app.cart_model = TestCart
         self.category_birds = Category.objects.create(name='birds',

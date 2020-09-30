@@ -12,11 +12,11 @@ from ...pricing import handler as pricing_handler
 from ...product.tests import DeadParrot
 from ...product.tests.pricing import FiveZlotyPriceHandler
 from ...order.tests import TestOrder
-from ...util.tests import ViewsTestCase
+from ...util.tests import BaseTestCase
 
 from ..app import CheckoutApp
 
-class BaseCheckoutAppTests(ViewsTestCase):
+class BaseCheckoutAppTests(BaseTestCase):
     def _create_cart(self, client):
         cart = self._get_or_create_cart_for_client(client)
         cart.replace_item(self.macaw_blue, 1)

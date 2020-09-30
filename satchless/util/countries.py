@@ -257,14 +257,7 @@ DEFAULT_COUNTRY_CHOICES = (
 )
 
 def build_country_choices():
-    country_list = getattr(settings, 'SATCHLESS_COUNTRY_CHOICES',
-                           DEFAULT_COUNTRY_CHOICES)
-    if isinstance(country_list, str):
-        mod_name, han_name = country_list.rsplit('.', 1)
-        module = import_module(mod_name)
-        country_list = getattr(module, han_name)
-    if hasattr(country_list, '__call__'):
-        country_list = country_list()
+    country_list = DEFAULT_COUNTRY_CHOICES
     country_keys = dict(DEFAULT_COUNTRY_CHOICES)
     countries = []
     for country in country_list:

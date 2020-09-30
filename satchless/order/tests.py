@@ -14,13 +14,13 @@ from .app import order_app
 from .models import Order, OrderManager
 from ..cart.tests import TestCart
 
-from ..util.tests import ViewsTestCase
+from ..util.tests import BaseTestCase
 
 class TestOrder(Order):
     cart = models.ForeignKey(TestCart, blank=True, null=True, related_name='orders', on_delete=models.PROTECT)
     objects = OrderManager()
 
-class OrderTest(ViewsTestCase):
+class OrderTest(BaseTestCase):
     def setUp(self):
         order_app.order_model = TestOrder
         self.macaw = DeadParrot.objects.create(slug='macaw',
