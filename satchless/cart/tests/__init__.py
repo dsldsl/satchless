@@ -69,12 +69,12 @@ class Cart(BaseTestCase):
 
         pricing_handler.pricing_queue = pricing_handler.PricingQueue(FiveZlotyPriceHandler)
 
-    def test_unicode(self):
+    def test_str(self):
         cart1 = TestCart(typ='satchless.test_cart1')
-        self.assertEquals(six.text_type(cart1), 'satchless.test_cart1')
+        self.assertEqual(six.text_type(cart1), 'satchless.test_cart1')
 
         cart2 = TestCart(typ='satchless.test_cart2', owner=self.user1)
-        self.assertEquals(six.text_type(cart2), 'satchless.test_cart2 of testuser')
+        self.assertEqual(six.text_type(cart2), 'satchless.test_cart2 of testuser')
 
     def test_basic_cart_ops(self):
         cart = TestCart.objects.create(typ='satchless.test_cart')

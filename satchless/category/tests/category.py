@@ -20,5 +20,5 @@ class Models(TestCase):
         self.parrots = Category.objects.create(slug='parrots', name=u'Parrorts',
                                                parent=self.birds)
 
-    def test_unicode(self):
-        self.assertEquals(six.text_type(self.animals), u'Animals')
+    def test_str(self):
+        self.assertEqual(six.text_type(self.animals), u'Animals')

@@ -127,14 +127,12 @@ class Order(models.Model):
         return sum([g.subtotal(currency=self.currency) for g in self.groups.all()],
                    Price(0, currency=self.currency))
 
-    def delivery_price(self):
-        return sum([g.delivery_price() for g in self.groups.all()],
-                   Price(0, currency=self.currency))
-
     def payment_price(self):
         try:
-            return sum([p.price for p in self.paymentvariant_set.all()],
-                Price(0, currency=self.currency))
+            return Price(
+                sum([p.price for p in self.paymentvariant_set.all()], 0),
+                currency=self.currency
+            )
         except ObjectDoesNotExist:
             return Price(0, currency=self.currency)
 
@@ -179,16 +177,8 @@ class DeliveryGroup(models.Model):
         return sum([i.price(currency=currency) for i in self.items.all()],
                 Price(0, currency=currency))
 
-    def delivery_price(self):
-        try:
-            return Price(self.deliveryvariant.price,
-                         currency=self.order.currency)
-        except ObjectDoesNotExist:
-            return Price(0, currency=self.order.currency)
-
     def total(self):
-        delivery_price = self.delivery_price()
-        return delivery_price + sum([i.price() for i in self.items.all()],
+        return sum([i.price() for i in self.items.all()],
                                     Price(0, currency=self.order.currency))
 
 

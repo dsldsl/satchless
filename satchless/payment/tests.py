@@ -36,7 +36,7 @@ class TestPaymentProvider(PaymentProvider):
     def enum_types(self, order=None, customer=None):
         yield self, TestPaymentType('gold', 'Gold', order=order, customer=customer)
         yield self, TestPaymentType('silver', 'Silver', order=order, customer=customer)
-        
+
 
 class TestPaymentProvider2Form(forms.Form):
     def __init__(self, **kwargs):
@@ -57,7 +57,7 @@ class PaymentProviderTest(TestCase):
         self.customer = get_user_model().objects.create()
 
     def test_enum_types(self):
-        self.assertEquals(
+        self.assertEqual(
             list(self.p.enum_types(self.order, self.customer)),
             [
                 (self.p, TestPaymentType('gold', 'Gold', order=self.order, customer=self.customer)),
@@ -75,7 +75,7 @@ class PaymentProviderTest(TestCase):
         )
 
     def test_get_configuration_form_default(self):
-        self.assertEquals(
+        self.assertEqual(
             self.p.get_configuration_form(self.order, {'foo': 'bar'}, 'gold'),
             None
         )
