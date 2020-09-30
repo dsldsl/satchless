@@ -5,8 +5,6 @@ from django.core.exceptions import ImproperlyConfigured
 from satchless.core.handler import QueueHandler
 from satchless.payment import PaymentFailure
 
-from ..delivery import DeliveryProvider, DeliveryType
-from ..delivery.models import DeliveryVariant
 from ..payment import PaymentProvider, PaymentType
 from ..payment.models import PaymentVariant
 from . import Partitioner
@@ -110,47 +108,3 @@ class PaymentQueue(PaymentProvider, QueueHandler):
 payment_providers = getattr(settings, 'SATCHLESS_PAYMENT_PROVIDERS', [])
 payment_queue = PaymentQueue(*payment_providers)
 
-
-### DELIVERY PROVIDERS
-class DeliveryQueue(DeliveryProvider, QueueHandler):
-    element_class = DeliveryProvider
-
-    def enum_types(self, delivery_group=None, customer=None):
-        for provider in self.queue:
-            types = provider.enum_types(delivery_group=delivery_group,
-                                        customer=customer)
-            for provider, typ in types:
-                if not isinstance(typ, DeliveryType):
-                    raise ValueError('Delivery types must be instances of'
-                                     ' DeliveryType type, not %s.' %
-                                     (repr(typ,)))
-                yield provider, typ
-
-    def _get_provider(self, delivery_group, typ):
-        for provider, delivery_type in self.enum_types(delivery_group):
-            if delivery_type.typ == typ:
-                return provider
-        raise ValueError('Unable to find a delivery provider for type %s' %
-                         (typ,))
-
-    def get_configuration_form(self, delivery_group, data, typ=None):
-        typ = typ or delivery_group.delivery_type
-        provider = self._get_provider(delivery_group, typ)
-        return provider.get_configuration_form(delivery_group=delivery_group,
-                                               data=data, typ=typ)
-
-    def create_variant(self, delivery_group, form, typ=None):
-        typ = typ or delivery_group.delivery_type
-        provider = self._get_provider(delivery_group, typ)
-        # XXX: Do we really need it here?
-        try:
-            if delivery_group.deliveryvariant.pk:
-                delivery_group.deliveryvariant.delete()
-        except DeliveryVariant.DoesNotExist:
-            pass
-        return provider.create_variant(delivery_group=delivery_group,
-                                       form=form, typ=typ)
-
-
-delivery_providers = getattr(settings, 'SATCHLESS_DELIVERY_PROVIDERS', [])
-delivery_queue = DeliveryQueue(*delivery_providers)

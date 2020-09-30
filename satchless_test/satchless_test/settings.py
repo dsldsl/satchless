@@ -42,7 +42,6 @@ INSTALLED_APPS = [
     'satchless.category',
     'satchless.checkout',
     'satchless.contrib.pricing.simpleqty',
-    'satchless.delivery',
     'satchless.order',
     'satchless.payment',
     'satchless.pricing',
@@ -140,4 +139,3 @@ SATCHLESS_PRICING_HANDLERS = [
 SATCHLESS_ORDER_PARTITIONERS = [
     'satchless.contrib.order.partitioner.simple.SimplePartitioner',
 ]
-SATCHLESS_DELIVERY_PROVIDERS = []
