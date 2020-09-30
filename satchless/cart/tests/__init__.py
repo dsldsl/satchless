@@ -7,10 +7,13 @@ import six
 
 from decimal import Decimal
 from django.db import models as dj_models
-from django.contrib.auth import get_user_model
+from django.contrib.auth import (
+    models as auth_models,
+    get_user_model,
+)
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse
-from django.test import Client
+from django.test import Client, RequestFactory
 from ...cart.models import Cart, CartItem, CART_SESSION_KEY
 
 from ...category.models import Category
@@ -161,3 +164,87 @@ class Cart(BaseTestCase):
                           result.reason),
                          (1, 0, u"Parrots don't rest in groups"))
         self.assertEqual(1, cart.get_quantity(self.cockatoo_white_d))
+
+    def test_get_from_request_does_not_exist_anon(self):
+        request = RequestFactory()
+        request.session = {}
+        request.user = auth_models.AnonymousUser()
+        typ = 'satchless.test_get_from_request_does_not_exist_anon'
+        with self.assertRaises(TestCart.DoesNotExist):
+            TestCart.objects.get_from_request(request, typ)
+
+    def test_get_from_request_exists_anon(self):
+        request = RequestFactory()
+        request.session = {}
+        request.user = auth_models.AnonymousUser()
+        typ = 'satchless.test_get_from_request_exists_anon'
+        key = '_satchless_cart-%s' % typ
+        cart = TestCart.objects.create(typ=typ)
+        request.session[key] = cart.pk
+        self.assertEqual(
+            TestCart.objects.get_from_request(request, typ),
+            cart,
+        )
+
+    def test_get_from_request_does_not_exist_authenticated(self):
+        request = RequestFactory()
+        request.session = {}
+        request.user = get_user_model().objects.create(username='testuser1')
+        typ = 'satchless.test_get_from_request_does_not_exist_authenticated'
+        with self.assertRaises(TestCart.DoesNotExist):
+            TestCart.objects.get_from_request(request, typ)
+
+    def test_get_from_request_exists_authenticated(self):
+        request = RequestFactory()
+        request.session = {}
+        request.user = get_user_model().objects.create(username='testuser2')
+        typ = 'satchless.test_get_from_request_exists_authenticated'
+        key = '_satchless_cart-%s' % typ
+        cart = TestCart.objects.create(typ=typ)
+        request.session[key] = cart.pk
+        new_cart = TestCart.objects.get_from_request(request, typ)
+        self.assertEqual(new_cart, cart)
+        self.assertEqual(new_cart.owner, request.user)
+
+    def test_get_or_create_from_request_does_not_exist_anon(self):
+        request = RequestFactory()
+        request.session = {}
+        request.user = auth_models.AnonymousUser()
+        typ = 'satchless.test_get_or_create_from_request_does_not_exist_anon'
+        cart = TestCart.objects.get_or_create_from_request(request, typ)
+        self.assertIsNone(cart.owner)
+        self.assertEqual(cart.typ, typ)
+
+    def test_get_or_create_from_request_exists_anon(self):
+        request = RequestFactory()
+        request.session = {}
+        request.user = auth_models.AnonymousUser()
+        typ = 'satchless.test_get_or_create_from_request_exists_anon'
+        key = '_satchless_cart-%s' % typ
+        cart = TestCart.objects.create(typ=typ)
+        request.session[key] = cart.pk
+        self.assertEqual(
+            TestCart.objects.get_or_create_from_request(request, typ),
+            cart,
+        )
+
+    def test_get_or_create_from_request_does_not_exist_authenticated(self):
+        request = RequestFactory()
+        request.session = {}
+        request.user = get_user_model().objects.create(username='testuser1')
+        typ = 'satchless.test_get_or_create_from_request_does_not_exist_authenticated'
+        cart = TestCart.objects.get_or_create_from_request(request, typ)
+        self.assertEqual(cart.owner, request.user)
+        self.assertEqual(cart.typ, typ)
+
+    def test_get_or_create_from_request_exists_authenticated(self):
+        request = RequestFactory()
+        request.session = {}
+        request.user = get_user_model().objects.create(username='testuser2')
+        typ = 'satchless.test_get_or_create_from_request_exists_authenticated'
+        key = '_satchless_cart-%s' % typ
+        cart = TestCart.objects.create(typ=typ)
+        request.session[key] = cart.pk
+        new_cart = TestCart.objects.get_or_create_from_request(request, typ)
+        self.assertEqual(new_cart, cart)
+        self.assertEqual(new_cart.owner, request.user)

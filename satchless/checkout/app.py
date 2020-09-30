@@ -5,7 +5,7 @@ from django.template.response import TemplateResponse
 from django.utils.decorators import method_decorator
 from django.views.decorators.http import require_POST
 
-from ..cart.models import Cart
+from ..cart.models import Cart, user_is_authenticated
 from ..order import handler
 from ..order.exceptions import EmptyCart
 from ..order.models import Order
@@ -21,7 +21,7 @@ class CheckoutApp(SatchlessApp):
     order_model = Order
 
     def get_order(self, request, order_token):
-        user = request.user if request.user.is_authenticated() else None
+        user = request.user if user_is_authenticated(request.user) else None
         try:
             return self.order_model.objects.get(token=order_token, user=user)
         except self.order_model.DoesNotExist:

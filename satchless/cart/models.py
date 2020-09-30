@@ -16,13 +16,20 @@ CART_SESSION_KEY = '_satchless_cart-%s' # takes typ
 def get_default_currency():
     return settings.SATCHLESS_DEFAULT_CURRENCY
 
+def user_is_authenticated(user):
+    # Django 1/2/3 compatible
+    if callable(user.is_authenticated):
+        return user.is_authenticated()
+    return user.is_authenticated
+
+
 class CartManager(models.Manager):
     def get_from_request(self, request, typ):
         try:
             cart = self.get(typ=typ, pk=request.session[CART_SESSION_KEY % typ])
-            if cart.owner is None and request.user.is_authenticated():
+            if cart.owner is None and user_is_authenticated(request.user):
                 cart.owner = request.user
-                cart.save()
+                cart.save(update_fields=['owner'])
         except (self.model.DoesNotExist, KeyError, AttributeError):
             raise self.model.DoesNotExist()
         return cart
@@ -31,7 +38,7 @@ class CartManager(models.Manager):
         try:
             return self.get_from_request(request, typ)
         except (self.model.DoesNotExist, KeyError):
-            owner = request.user if request.user.is_authenticated() else None
+            owner = request.user if user_is_authenticated(request.user) else None
             cart = self.create(typ=typ, owner=owner)
             try:
                 request.session[CART_SESSION_KEY % typ] = cart.pk
