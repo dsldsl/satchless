@@ -42,7 +42,6 @@ INSTALLED_APPS = [
     'satchless.category',
     'satchless.checkout',
     'satchless.contrib.pricing.simpleqty',
-    'satchless.contrib.tax.flatgroups',
     'satchless.delivery',
     'satchless.order',
     'satchless.payment',
