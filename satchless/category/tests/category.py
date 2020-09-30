@@ -1,5 +1,6 @@
 from __future__ import absolute_import
 import os
+import six
 
 from django.conf.urls import include, url
 from django.test import TestCase
@@ -20,4 +21,4 @@ class Models(TestCase):
                                                parent=self.birds)
 
     def test_unicode(self):
-        self.assertEquals(unicode(self.animals), u'Animals')
+        self.assertEquals(six.text_type(self.animals), u'Animals')
