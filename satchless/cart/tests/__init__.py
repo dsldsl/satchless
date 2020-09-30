@@ -11,21 +11,15 @@ from ...cart.models import Cart, CartItem, CART_SESSION_KEY
 
 from ...category.app import product_app
 from ...category.models import Category
-from ...checkout.app import CheckoutApp
 from ...pricing import handler as pricing_handler
 from ...product import handler
 from ...product.tests.pricing import FiveZlotyPriceHandler
 from ...product.tests import (DeadParrot, ZombieParrot, DeadParrotVariantForm)
 from ...util.tests import BaseTestCase
 
-from ..app import cart_app
 from .. import models
 from .. import signals
 
-
-class FakeCheckoutApp(CheckoutApp):
-    def prepare_order(self, *args, **kwargs):
-        return HttpResponse("OK")
 
 class TestCart(Cart):
 
@@ -41,7 +35,6 @@ class TestCartItem(CartItem):
 
 class Cart(BaseTestCase):
     def setUp(self):
-        cart_app.cart_model = TestCart
         self.category_birds = Category.objects.create(name='birds',
                                                       slug='birds')
         self.macaw = DeadParrot.objects.create(slug='macaw',
@@ -76,7 +69,7 @@ class Cart(BaseTestCase):
         handler.init_queue()
 
     def test_basic_cart_ops(self):
-        cart = cart_app.cart_model.objects.create(typ='satchless.test_cart')
+        cart = TestCart.objects.create(typ='satchless.test_cart')
         cart.replace_item(self.macaw_blue, 1)
         cart.replace_item(self.macaw_blue_fake, Decimal('2.45'))
         cart.replace_item(self.cockatoo_white_a, Decimal('2.45'))
@@ -117,10 +110,10 @@ class Cart(BaseTestCase):
 
     def _get_or_create_cart_for_client(self, client=None, typ='cart'):
         try:
-            return cart_app.cart_model.objects.get(
+            return TestCart.objects.get(
                 pk=client.session[CART_SESSION_KEY % typ])[0]
         except KeyError:
-            cart = cart_app.cart_model.objects.create(typ=typ)
+            cart = TestCart.objects.create(typ=typ)
             client.session[CART_SESSION_KEY % typ] = cart.pk
             return cart
 
@@ -134,7 +127,7 @@ class Cart(BaseTestCase):
             elif not variant.looks_alive:
                 result.append((Decimal('1'), u"Parrots don't rest in groups"))
 
-        cart = cart_app.cart_model.objects.create(typ='satchless.test_cart_with_signals')
+        cart = TestCart.objects.create(typ='satchless.test_cart_with_signals')
         signals.cart_quantity_change_check.connect(modify_qty)
         result = cart.replace_item(self.macaw_blue, 10, dry_run=True)
         self.assertEqual((result.new_quantity, result.reason),

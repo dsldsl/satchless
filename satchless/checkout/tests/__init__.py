@@ -5,7 +5,6 @@ from django.http import HttpResponse
 from django.test import Client
 from satchless.cart.tests import TestCart
 
-from ...cart.app import cart_app
 from ...cart.models import CART_SESSION_KEY
 from ...order.app import order_app
 from ...pricing import handler as pricing_handler
@@ -24,10 +23,10 @@ class BaseCheckoutAppTests(BaseTestCase):
 
     def _get_or_create_cart_for_client(self, client=None, typ='cart'):
         try:
-            return cart_app.cart_model.objects.get(
+            return TestCart.objects.get(
                 pk=client.session[CART_SESSION_KEY % typ])[0]
         except KeyError:
-            cart = cart_app.cart_model.objects.create(typ=typ)
+            cart = TestCart.objects.create(typ=typ)
             client.session[CART_SESSION_KEY % typ] = cart.pk
             return cart
 
