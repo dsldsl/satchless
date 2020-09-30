@@ -43,7 +43,6 @@ INSTALLED_APPS = [
     'satchless.checkout',
     'satchless.contrib.delivery.simplepost',
     'satchless.contrib.payment.stripe_provider',
-    'satchless.contrib.pricing.cache',
     'satchless.contrib.pricing.simpleqty',
     'satchless.contrib.tax.flatgroups',
     'satchless.delivery',
@@ -140,9 +139,6 @@ SATCHLESS_DEFAULT_CURRENCY = 'USD'
 
 SATCHLESS_PRICING_HANDLERS = [
     'satchless.contrib.pricing.simpleqty.handler.SimpleQtyPricingHandler',
-    'satchless.contrib.pricing.cache.PricingCacheHandler',
-    'satchless.contrib.pricing.field.ProductFieldGetter',
-    'satchless.contrib.pricing.field.VariantFieldGetter',
 ]
 SATCHLESS_ORDER_PARTITIONERS = [
     'satchless.contrib.order.partitioner.simple.SimplePartitioner',

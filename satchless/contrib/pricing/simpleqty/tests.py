@@ -154,7 +154,6 @@ class Pricing(TestCase):
         cart.replace_item(self.macaw_blue_d, 4)
         item_macaw_blue_a = cart.items.get(variant=self.macaw_blue_a)
         item_macaw_blue_d = cart.items.get(variant=self.macaw_blue_d)
-
         self.assertEqual(item_macaw_blue_a.get_unit_price(currency='BTC'),
                          Price(Decimal('12.0'), currency='BTC'))
         self.assertEqual(item_macaw_blue_d.get_unit_price(currency='BTC'),
