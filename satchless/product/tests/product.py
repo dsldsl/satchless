@@ -5,7 +5,6 @@ import os
 from django.conf import settings
 from django.test import TestCase, Client
 
-from ..app import product_app
 from ..forms import FormRegistry, variant_form_for_product
 from ..models import Variant, Product
 

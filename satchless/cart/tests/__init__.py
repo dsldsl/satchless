@@ -9,7 +9,6 @@ from django.test import Client
 import os
 from ...cart.models import Cart, CartItem, CART_SESSION_KEY
 
-from ...category.app import product_app
 from ...category.models import Category
 from ...pricing import handler as pricing_handler
 from ...product import handler
