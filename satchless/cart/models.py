@@ -57,7 +57,7 @@ class Cart(models.Model):
 
     objects = CartManager()
 
-    def __unicode__(self):
+    def __str__(self):
         if self.owner:
             return u"%s of %s" % (self.typ, self.owner.username)
         else:
@@ -162,7 +162,7 @@ class CartItem(models.Model):
         abstract = True
         unique_together = ('cart', 'variant')
 
-    def __unicode__(self):
+    def __str__(self):
         return u"%s × %.10g" % (self.variant, self.quantity)
 
     def save(self, *args, **kwargs):

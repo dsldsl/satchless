@@ -23,7 +23,7 @@ class TestDeliveryProvider(DeliveryProvider):
         # by default this is one type delivery provider
         self.types = delivery_types or (DeliveryType('pidgin', 'pidgin'), )
 
-    def __unicode__(self):
+    def __str__(self):
         return ugettext("Test delivery")
 
     def enum_types(self, delivery_group=None, customer=None):

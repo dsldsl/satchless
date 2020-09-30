@@ -22,7 +22,7 @@ class ProductPrice(models.Model):
                                             "variants will be used."))
     price = models.DecimalField(_("base price"), max_digits=12, decimal_places=4)
 
-    def __unicode__(self):
+    def __str__(self):
         return six.text_type(self.product)
 
 

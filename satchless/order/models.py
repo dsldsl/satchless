@@ -98,7 +98,7 @@ class Order(models.Model):
         verbose_name_plural = _('orders (business)')
         ordering = ('-last_status_change',)
 
-    def __unicode__(self):
+    def __str__(self):
         return _('Order #%d') % self.id
 
     def save(self, *args, **kwargs):

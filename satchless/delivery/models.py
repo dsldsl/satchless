@@ -18,7 +18,7 @@ class DeliveryVariant(Subtyped):
     price = models.DecimalField(_('unit price'),
                                 max_digits=12, decimal_places=4)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
 
@@ -44,7 +44,7 @@ class PhysicalShippingVariant(DeliveryVariant):
     class Meta:
         abstract = True
 
-    def __unicode__(self):
+    def __str__(self):
         return "%s for %s, %s" % (self.name, self.shipping_full_name,
                                   self.get_shipping_country_display())
 

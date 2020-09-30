@@ -17,7 +17,7 @@ class Price(object):
         self.currency = currency
         self.tax_name = tax_name
 
-    def __unicode__(self):
+    def __str__(self):
         if self.tax_name:
             return (u"net=%s,gross=%s (%s)" %
                     (self.net, self.gross, self.tax_name))

@@ -21,7 +21,7 @@ class Product(Subtyped):
                                         ' hyphens and underscores only) and'
                                         ' descriptive for the SEO needs.'))
 
-    def __unicode__(self):
+    def __str__(self):
         return self.slug
 
     def sanitize_quantity(self, quantity):

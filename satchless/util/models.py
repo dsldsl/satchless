@@ -33,7 +33,7 @@ class Subtyped(models.Model):
     class Meta:
         abstract = True
 
-    def __unicode__(self):
+    def __str__(self):
         # XXX: can we do it in more clean way?
         if self.__in_unicode:
             return super(Subtyped, self).__unicode__()

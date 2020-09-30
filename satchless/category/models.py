@@ -23,5 +23,5 @@ class Category(MPTTModel):
         verbose_name = _("category")
         verbose_name_plural = _("categories")
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name

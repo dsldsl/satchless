@@ -29,7 +29,7 @@ class DeadParrotVariant(Variant):
     class Meta:
         unique_together = ('product', 'color', 'looks_alive')
 
-    def __unicode__(self):
+    def __str__(self):
         "For debugging purposes"
         return u"%s %s %s" % (
                 "alive" if self.looks_alive else "resting",
