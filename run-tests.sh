@@ -12,8 +12,8 @@ apps_to_test=( "${apps_with_test_dirs[@]}" "${apps_with_test_py[@]}" )
 echo "Running tests for ${apps_to_test[@]}"
 if [[ -z ${COVERAGE:-} ]]
 then
-  exec python satchless_test/manage.py test ${apps_to_test[@]}
+  python satchless_test/manage.py test ${apps_to_test[@]}
 else
-  exec coverage run --source=satchless satchless_test/manage.py test ${apps_to_test[@]}
+  coverage run --source=satchless satchless_test/manage.py test ${apps_to_test[@]}
   coveralls
 fi
