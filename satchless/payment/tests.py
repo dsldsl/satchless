@@ -115,3 +115,8 @@ class PaymentProviderTest(TestCase):
         self.assertEqual(form.data, data)
         self.assertEqual(form.order, self.order)
         self.assertEqual(form.typ, 'platinum')
+
+
+class PaymentVariantTest(TestCase):
+    def test_str(self):
+        self.assertEquals(str(PaymentVariant(name='platinum')), 'platinum')

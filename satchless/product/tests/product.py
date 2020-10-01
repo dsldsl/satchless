@@ -29,6 +29,7 @@ class ModelsTest(TestCase):
             self.assertEqual(type(product.get_subtype_instance()), DeadParrot)
             DeadParrot.objects.get(pk=product.pk).save()
             self.assertEqual(type(product.get_subtype_instance()), DeadParrot)
+            self.assertEqual(str(product), product.slug)
 
     def test_variants(self):
         self.macaw.variants.create(color='blue', looks_alive=False)
