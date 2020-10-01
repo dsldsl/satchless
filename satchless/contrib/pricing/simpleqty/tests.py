@@ -112,6 +112,14 @@ class Pricing(TestCase):
                                                               quantity=100),
                          Price(Decimal('10.0'), currency='BTC'))
 
+    def test_product_price_does_not_exist(self):
+        ProductPrice.objects.filter(product=self.macaw_blue_d.product).delete()
+        self.assertEqual(
+            self.pricing_queue.get_variant_price(
+                self.macaw_blue_d, currency='BTC', quantity=1, price=Price(1, currency='BTC')),
+            Price(1, currency='BTC')
+        )
+
     def test_basicranges(self):
         macaw_price = ProductPrice.objects.create(product=self.macaw,
                                                   price=Decimal('10.0'))

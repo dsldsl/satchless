@@ -122,6 +122,10 @@ class OrderTest(BaseTestCase):
         order = order_app.order_model.objects.get_from_cart(cart)
         self.assertEqual(order.total(), Price(net=15, gross=15, currency='USD'))
 
+    def test_no_paymentvariant(self):
+        order = TestOrder.objects.create(currency='USD')
+        self.assertIsNone(order.paymentvariant)
+
     def test_paymentvariant(self):
         order = TestOrder.objects.create(currency='USD')
         variant = PaymentVariant.objects.create(order=order, name='Gold-pressed latinum', price=10, amount=10)
