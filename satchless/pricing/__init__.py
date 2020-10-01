@@ -100,9 +100,6 @@ class PriceRange(object):
         if min_price > max_price:
             raise ValueError('Cannot create a PriceRange from %s to %s' %
                              (min_price, max_price))
-        if min_price.currency != max_price.currency:
-            raise ValueError('Cannot create a PriceRange as %s and %s use'
-                             ' different currencies' % (min_price, max_price))
         self.min_price = min_price
         self.max_price = max_price
 

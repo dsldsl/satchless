@@ -45,6 +45,12 @@ class PriceTest(TestCase):
     def test_invalid_addition(self):
         self.assertRaises(ValueError, lambda: self.p1 + self.p3)
 
+    def test_add_mismatch_tax_name(self):
+        self.assertEquals(
+            self.p1 + Price(10, currency='BTC', tax_name='other'),
+            Price(20, currency='BTC')
+        )
+
     def test_not_eq(self):
         self.assertFalse(self.p1 == Price(0, currency='USD'))
 
