@@ -17,7 +17,10 @@ from django.test import Client, RequestFactory
 from ...cart.models import Cart, CartItem, CART_SESSION_KEY
 
 from ...category.models import Category
-from ...pricing import handler as pricing_handler
+from ...pricing import (
+    Price,
+    handler as pricing_handler,
+)
 from ...product.tests.pricing import FiveZlotyPriceHandler
 from ...product.tests import DeadParrot, ZombieParrot
 from ...util.tests import BaseTestCase
