@@ -128,13 +128,10 @@ class Order(models.Model):
                    Price(0, currency=self.currency))
 
     def payment_price(self):
-        try:
-            return Price(
-                sum([p.price for p in self.paymentvariant_set.all()], 0),
-                currency=self.currency
-            )
-        except ObjectDoesNotExist:
-            return Price(0, currency=self.currency)
+        return Price(
+            sum([p.price for p in self.paymentvariant_set.all()], 0),
+            currency=self.currency
+        )
 
     def total(self):
         payment_price = self.payment_price()
