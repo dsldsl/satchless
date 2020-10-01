@@ -52,6 +52,24 @@ class PriceTest(TestCase):
         with self.assertRaises(TypeError):
             self.p1 > 0
 
+    def test_gt(self):
+        self.assertFalse(self.p1 > self.p2)
+        self.assertTrue(self.p2 > self.p1)
+
+    def test_ge(self):
+        self.assertTrue(self.p1 >= self.p1)
+        self.assertFalse(self.p1 >= self.p2)
+        self.assertTrue(self.p2 >= self.p1)
+
+    def test_lt(self):
+        self.assertTrue(self.p1 < self.p2)
+        self.assertFalse(self.p2 < self.p1)
+
+    def test_le(self):
+        self.assertTrue(self.p1 <= self.p1)
+        self.assertTrue(self.p1 <= self.p2)
+        self.assertFalse(self.p2 <= self.p1)
+
     def test_gt_mismatch_currency(self):
         with self.assertRaises(ValueError):
             self.p1 > self.p3
