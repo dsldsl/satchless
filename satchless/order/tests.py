@@ -8,13 +8,16 @@ import os
 import six
 
 from django.conf import settings
+from django.contrib.auth import get_user_model
 from django.test import Client
 
 from ..payment.models import PaymentVariant
+from ..payment.tests import TestPaymentType
 from ..pricing import handler, Price
 from ..product.tests import DeadParrot
 from ..product.tests.pricing import FiveZlotyPriceHandler
 from .app import order_app
+from .handler import payment_queue
 from .models import (
     DeliveryGroup,
     Order,
@@ -108,7 +111,7 @@ class OrderTest(BaseTestCase):
         cart.replace_item(self.macaw_blue, 1)
         cart.replace_item(self.macaw_blue_fake, Decimal('2.45'))
         order = order_app.order_model.objects.get_from_cart(cart)
-        variant = PaymentVariant.objects.create(order=order, name='gold-pressed latinum', price=10, amount=10)
+        variant = PaymentVariant.objects.create(order=order, name='Gold-pressed latinum', price=10, amount=10)
         self.assertEqual(order.payment_price(), Price(net=10, gross=10, currency='USD'))
 
     def test_total(self):
@@ -120,7 +123,7 @@ class OrderTest(BaseTestCase):
 
     def test_paymentvariant(self):
         order = TestOrder.objects.create(currency='USD')
-        variant = PaymentVariant.objects.create(order=order, name='gold-pressed latinum', price=10, amount=10)
+        variant = PaymentVariant.objects.create(order=order, name='Gold-pressed latinum', price=10, amount=10)
         self.assertEqual(order.paymentvariant, variant)
 
 
@@ -141,4 +144,39 @@ class OrderedItemTest(BaseTestCase):
 
     def test_price(self):
         self.assertEqual(self.item.price(), Price(net=20, gross=22, currency='USD'))
+
+
+class PaymentQueueTest(BaseTestCase):
+    def setUp(self):
+        self.order = TestOrder.objects.create(currency='USD')
+        self.customer = get_user_model().objects.create()
+
+    def test_enum_types(self):
+        self.assertEqual(
+            list(payment_queue.enum_types(self.order, self.customer)),
+            [
+                (payment_queue.queue[0], TestPaymentType('gold', 'Gold', order=self.order, customer=self.customer)),
+                (payment_queue.queue[0], TestPaymentType('silver', 'Silver', order=self.order, customer=self.customer)),
+                (payment_queue.queue[1], TestPaymentType('platinum', 'Platinum', order=self.order, customer=self.customer)),
+                (payment_queue.queue[1], TestPaymentType('gold-pressed-latinum', 'Gold-pressed latinum', order=self.order, customer=self.customer)),
+            ]
+        )
+
+    def test_as_choices(self):
+        self.assertEqual(
+            payment_queue.as_choices(self.order, self.customer),
+            [
+                ('gold', 'Gold'),
+                ('silver', 'Silver'),
+                ('platinum', 'Platinum'),
+                ('gold-pressed-latinum', 'Gold-pressed latinum'),
+            ]
+        )
+
+    def test_get_configuration_form(self):
+        data = {'foo': 'bar'}
+        form = payment_queue.get_configuration_form(self.order, data, 'platinum')
+        self.assertEqual(form.data, data)
+        self.assertEqual(form.order, self.order)
+        self.assertEqual(form.typ, 'platinum')
 

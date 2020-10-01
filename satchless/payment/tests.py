@@ -46,6 +46,10 @@ class TestPaymentProvider2Form(forms.Form):
 
 
 class TestPaymentProvider2(TestPaymentProvider):
+    def enum_types(self, order=None, customer=None):
+        yield self, TestPaymentType('platinum', 'Platinum', order=order, customer=customer)
+        yield self, TestPaymentType('gold-pressed-latinum', 'Gold-pressed latinum', order=order, customer=customer)
+
     def get_configuration_form(self, order, data, typ=None):
         return TestPaymentProvider2Form(data=data, order=order, typ=typ)
 
@@ -83,8 +87,8 @@ class PaymentProviderTest(TestCase):
     def test_get_configuration_form_override(self):
         p = TestPaymentProvider2()
         data = {'foo': 'bar'}
-        form = p.get_configuration_form(self.order, data, 'gold')
+        form = p.get_configuration_form(self.order, data, 'platinum')
         self.assertIsInstance(form, TestPaymentProvider2Form)
         self.assertEqual(form.data, data)
         self.assertEqual(form.order, self.order)
-        self.assertEqual(form.typ, 'gold')
+        self.assertEqual(form.typ, 'platinum')

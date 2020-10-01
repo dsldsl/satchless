@@ -139,3 +139,7 @@ SATCHLESS_PRICING_HANDLERS = [
 SATCHLESS_ORDER_PARTITIONERS = [
     'satchless.contrib.order.partitioner.simple.SimplePartitioner',
 ]
+SATCHLESS_PAYMENT_PROVIDERS = [
+    'satchless.payment.tests.TestPaymentProvider',
+    'satchless.payment.tests.TestPaymentProvider2',
+]
