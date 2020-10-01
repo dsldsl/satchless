@@ -20,12 +20,5 @@ class CheckoutApp(SatchlessApp):
     cart_type = 'cart'
     order_model = Order
 
-    def get_order(self, request, order_token):
-        user = request.user if user_is_authenticated(request.user) else None
-        try:
-            return self.order_model.objects.get(token=order_token, user=user)
-        except self.order_model.DoesNotExist:
-            return
-
     def checkout(self, request, order_token):
         raise NotImplementedError()

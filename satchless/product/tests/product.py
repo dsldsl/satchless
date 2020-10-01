@@ -5,15 +5,14 @@ import os
 from django.conf import settings
 from django.test import TestCase, Client
 
-from ..forms import FormRegistry, variant_form_for_product
 from ..models import Variant, Product
 
-from . import DeadParrot, DeadParrotVariant, ZombieParrot, DeadParrotVariantForm
+from . import DeadParrot, DeadParrotVariant, ZombieParrot
 
-__all__ = ['Models', 'Registry']
+__all__ = ['ModelsTest']
 
 
-class Models(TestCase):
+class ModelsTest(TestCase):
     def setUp(self):
         settings.DEBUG = True
         self.macaw = DeadParrot.objects.create(slug='macaw',
@@ -49,14 +48,3 @@ class Models(TestCase):
             self.assertEqual(type(variant.get_subtype_instance()), DeadParrotVariant)
             DeadParrotVariant.objects.get(pk=variant.pk).save()
             self.assertEqual(type(variant.get_subtype_instance()), DeadParrotVariant)
-
-
-class Registry(TestCase):
-    def test_form_registry(self):
-        registry = FormRegistry()
-        variant_form_for_product(DeadParrot,
-                                 registry=registry)(DeadParrotVariantForm)
-        self.assertEqual(registry.get_handler(DeadParrot),
-                         DeadParrotVariantForm)
-        self.assertEqual(registry.get_handler(ZombieParrot),
-                         DeadParrotVariantForm)
