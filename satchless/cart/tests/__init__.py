@@ -118,7 +118,7 @@ class Cart(BaseTestCase):
 
         cart.add_item(self.macaw_blue, -101)
         self.assertEqual(cart.get_quantity(self.macaw_blue), Decimal('0'))
-        self.assertEqual(cart.total(), Decimal('100.00'))
+        self.assertEqual(cart.total(), Price(2520, currency='USD'))
 
     def _get_or_create_cart_for_client(self, client=None, typ='cart'):
         try:

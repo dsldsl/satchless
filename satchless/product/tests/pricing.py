@@ -10,14 +10,14 @@ from satchless.pricing.handler import PricingQueue
 __all__ = ['BasicHandlerTest']
 
 class FiveZlotyPriceHandler(PricingHandler):
-    """Dummy base price handler - everything has 5PLN price"""
+    """Dummy base price handler - everything has 5USD price"""
 
     def get_variant_price(self, *args, **kwargs):
-        return Price(net=5, gross=5, currency=u'PLN')
+        return Price(net=5, gross=5, currency=u'USD')
 
     def get_product_price_range(self, *args, **kwargs):
-        return PriceRange(min_price=Price(net=5, gross=5, currency=u'PLN'),
-                          max_price=Price(net=5, gross=5, currency=u'PLN'))
+        return PriceRange(min_price=Price(net=5, gross=5, currency=u'USD'),
+                          max_price=Price(net=5, gross=5, currency=u'USD'))
 
 class NinetyPerecentTaxPriceHandler(PricingHandler):
     """Scary price handler - it counts 90% of tax for everything"""
@@ -66,18 +66,18 @@ class BasicHandlerTest(TestCase):
         self.pricing_queue = PricingQueue(*settings.SATCHLESS_PRICING_HANDLERS)
 
     def test_discounted_price(self):
-        price = self.pricing_queue.get_variant_price(None, u'PLN', quantity=1,
+        price = self.pricing_queue.get_variant_price(None, u'USD', quantity=1,
                                           discount=True)
         self.assertEqual(price,
                          Price(net=5*decimal.Decimal('0.9'),
                                gross=(5 * decimal.Decimal('1.9') *
                                       decimal.Decimal('0.9')),
-                               currency=u'PLN'))
+                               currency=u'USD'))
 
     def test_undiscounted_price(self):
-        price = self.pricing_queue.get_variant_price(None, u'PLN', quantity=1,
+        price = self.pricing_queue.get_variant_price(None, u'USD', quantity=1,
                                           discount=False)
         self.assertEqual(price,
                          Price(net=5,
                                gross=5*decimal.Decimal('1.9'),
-                               currency=u'PLN'))
+                               currency=u'USD'))
