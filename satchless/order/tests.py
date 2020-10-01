@@ -204,6 +204,25 @@ class PaymentQueueTest(BaseTestCase):
         self.assertEqual(forms[1][1].order, self.order)
         self.assertEqual(forms[1][1].typ, 'platinum')
 
+    def test_create_variant(self):
+        data = {'amount': 100}
+        form = payment_queue.get_configuration_form(self.order, data, typ='platinum')
+        variant = payment_queue.create_variant(self.order, form, clear=False, typ='platinum')
+        self.assertIsInstance(variant, PaymentVariant)
+        self.assertEqual(variant.name, 'platinum')
+        self.assertEqual(variant.order, self.order)
+        self.assertEqual(variant.amount, 100)
+
+        self.assertEqual(self.order.paymentvariant_set.all().count(), 1)
+
+        variant = payment_queue.create_variant(self.order, form, clear=True, typ='platinum')
+        self.assertIsInstance(variant, PaymentVariant)
+        self.assertEqual(variant.name, 'platinum')
+        self.assertEqual(variant.order, self.order)
+        self.assertEqual(variant.amount, 100)
+
+        self.assertEqual(self.order.paymentvariant_set.all().count(), 1)
+
     def test_create_variants(self):
         data = (
             ('gold', None),
