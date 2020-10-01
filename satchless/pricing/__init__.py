@@ -17,13 +17,6 @@ class Price(object):
         self.currency = currency
         self.tax_name = tax_name
 
-    def __str__(self):
-        if self.tax_name:
-            return (u"net=%s,gross=%s (%s)" %
-                    (self.net, self.gross, self.tax_name))
-        else:
-            return u"net=%s,gross=%s" % (self.net, self.gross)
-
     def __repr__(self):
         return ("Price(net=%.10g, gross=%.10g, currency='%s')" %
                 (self.net, self.gross, self.currency))
@@ -148,7 +141,7 @@ class PriceRange(object):
         return False
 
     def __ne__(self, other):
-        return not self == other
+        return not (self == other)
 
     def __contains__(self, item):
         if not isinstance(item, Price):
