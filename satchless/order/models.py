@@ -31,11 +31,10 @@ class OrderManager(models.Manager):
                                               currency=cart.currency)
         else:
             order = instance
-        #     order.groups.all().delete()
-        #     try:
-        #         order.paymentvariant_set.all().delete()
-        #     except ObjectDoesNotExist:
-        #         pass
+            for group in order.groups.all():
+                group.items.all().delete()
+                group.delete()
+            order.paymentvariant_set.all().delete()
         groups = partitioner_queue.partition(cart)
         for group in groups:
             delivery_group = order.create_delivery_group()
