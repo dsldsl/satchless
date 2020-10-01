@@ -45,6 +45,9 @@ class TestPaymentProvider(PaymentProvider):
             amount=0,
         )
 
+    def confirm(self, order, typ=None, variant=None):
+        order.set_status('confirmed')
+
 
 class TestPaymentProvider2Form(forms.Form):
     amount = forms.IntegerField()
@@ -72,6 +75,7 @@ class TestPaymentProvider2(TestPaymentProvider):
             price=Decimal(form.cleaned_data['amount']),
             amount=Decimal(form.cleaned_data['amount']),
         )
+
 
 class PaymentProviderTest(TestCase):
     def setUp(self):

@@ -218,6 +218,8 @@ class PaymentQueueTest(BaseTestCase):
         self.assertEqual(variants[1][1].order, self.order)
         self.assertEqual(variants[1][1].amount, 100)
 
+        self.assertEqual(self.order.paymentvariant_set.all().count(), 2)
+
         variants = payment_queue.create_variants(self.order, forms, clear=True)
         self.assertEqual(variants[0][0], 'gold')
         self.assertIsInstance(variants[0][1], PaymentVariant)
@@ -230,3 +232,16 @@ class PaymentQueueTest(BaseTestCase):
         self.assertEqual(variants[1][1].name, 'platinum')
         self.assertEqual(variants[1][1].order, self.order)
         self.assertEqual(variants[1][1].amount, 100)
+
+        self.assertEqual(self.order.paymentvariant_set.all().count(), 2)
+
+    def test_confirms(self):
+        data = (
+            ('gold', None),
+            ('platinum', {'amount': 100}),
+        )
+        forms = payment_queue.get_configuration_forms(self.order, data)
+        variants = payment_queue.create_variants(self.order, forms, clear=False)
+        payment_queue.confirms(self.order, variants)
+        order = TestOrder.objects.get(id=self.order.pk)
+        self.assertEqual(order.status, 'confirmed')

@@ -46,7 +46,7 @@ class PaymentProvider(object):
         '''
         raise NotImplementedError()
 
-    def confirm(self, order, typ=None):
+    def confirm(self, order, typ=None, variant=None):
         '''
         Confirm the payment, raise PaymentFailure on errors.
         '''
