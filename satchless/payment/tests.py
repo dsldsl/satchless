@@ -119,4 +119,4 @@ class PaymentProviderTest(TestCase):
 
 class PaymentVariantTest(TestCase):
     def test_str(self):
-        self.assertEquals(str(PaymentVariant(name='platinum')), 'platinum')
+        self.assertEquals(str(models.PaymentVariant(name='platinum')), 'platinum')
