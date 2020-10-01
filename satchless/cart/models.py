@@ -19,7 +19,7 @@ def get_default_currency():
 def user_is_authenticated(user):
     # Django 1/2/3 compatible
     if callable(user.is_authenticated):
-        return user.is_authenticated()
+        return user.is_authenticated() # pragma: no cover
     return user.is_authenticated
 
 
