@@ -48,8 +48,17 @@ jobs:
       - name: Create test database
         run: python ${GITHUB_WORKSPACE}/satchless_test/manage.py migrate
 
-      - name: Run tests
+      - name: Run tests with coverage
+        # Run tests and upload coverage stats to coveralls.io
+        if: ${{ matrix.coverage }}
         env:
-          COVERAGE: ${{ matrix.coverage }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: ./run-tests.sh
+        run: |
+          pip install -r requirements-coverage.txt
+          py.test --cov
+          coveralls
+
+      - name: Run tests
+        # Run tests without uploading coverage stats to coveralls.io
+        if: ${{ ! matrix.coverage }}
+        run: py.test
