@@ -48,6 +48,9 @@ class PriceTest(TestCase):
     def test_not_eq(self):
         self.assertFalse(self.p1 == Price(0, currency='USD'))
 
+    def test_not_eq_mismatch_type(self):
+        self.assertFalse(self.p1 == 0)
+
     def test_gt_mismatch_type(self):
         with self.assertRaises(TypeError):
             self.p1 > 0
@@ -167,8 +170,9 @@ class PriceRangeTest(TestCase):
             PriceRange(Price(1, currency='USD'), Price(2, currency='BTC'))
 
     def test_add_price_range_mismatch_currency(self):
+        pr = PriceRange(Price(1, currency='USD'), Price(2, currency='USD'))
         with self.assertRaises(ValueError):
-            self.pr1 + PriceRange(Price(1, currency='USD'), Price(2, currency='USB'))
+            self.pr1 + pr
 
     def test_add_price_mismatch_currency(self):
         with self.assertRaises(ValueError):

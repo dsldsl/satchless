@@ -96,16 +96,14 @@ class PriceRange(object):
     min_price = None
     max_price = None
 
-    def __init__(self, min_price, max_price=None):
-        self.min_price = min_price
-        if max_price is None:
-            max_price = min_price
+    def __init__(self, min_price, max_price):
         if min_price > max_price:
             raise ValueError('Cannot create a PriceRange from %s to %s' %
                              (min_price, max_price))
         if min_price.currency != max_price.currency:
             raise ValueError('Cannot create a PriceRange as %s and %s use'
                              ' different currencies' % (min_price, max_price))
+        self.min_price = min_price
         self.max_price = max_price
 
     def __repr__(self):
