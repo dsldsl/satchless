@@ -116,6 +116,10 @@ class Cart(BaseTestCase):
         self.assertEqual(cart.get_quantity(self.cockatoo_blue_a), Decimal('100'))
         self.assertEqual(cart.get_quantity(self.cockatoo_blue_d), Decimal('102'))
 
+        cart.add_item(self.macaw_blue, -101)
+        self.assertEqual(cart.get_quantity(self.macaw_blue), Decimal('0'))
+        self.assertEqual(cart.total(), Decimal('100.00'))
+
     def _get_or_create_cart_for_client(self, client=None, typ='cart'):
         try:
             return TestCart.objects.get(

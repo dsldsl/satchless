@@ -40,10 +40,8 @@ class CartManager(models.Manager):
         except (self.model.DoesNotExist, KeyError):
             owner = request.user if user_is_authenticated(request.user) else None
             cart = self.create(typ=typ, owner=owner)
-            try:
+            if hasattr(request, 'session'):
                 request.session[CART_SESSION_KEY % typ] = cart.pk
-            except AttributeError:
-                pass
             return cart
 
 
