@@ -59,6 +59,7 @@ class Pricing(TestCase):
     def test_basicprices(self):
         macaw_price = ProductPrice.objects.create(product=self.macaw,
                                                   price=Decimal('10.0'))
+        self.assertEqual(str(macaw_price), 'macaw')
         macaw_price.qty_overrides.create(min_qty=5, price=Decimal('9.0'))
         macaw_price.qty_overrides.create(min_qty=10, price=Decimal('8.0'))
         macaw_price.offsets.create(variant=self.macaw_blue_a,
@@ -117,6 +118,11 @@ class Pricing(TestCase):
         self.assertEqual(
             self.pricing_queue.get_variant_price(
                 self.macaw_blue_d, currency='BTC', quantity=1, price=Price(1, currency='BTC')),
+            Price(1, currency='BTC')
+        )
+        self.assertEqual(
+            self.pricing_queue.get_product_price_range(
+                self.macaw_blue_d.product, currency='BTC', price=Price(1, currency='BTC')),
             Price(1, currency='BTC')
         )
 
