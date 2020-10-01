@@ -169,9 +169,6 @@ class CartItem(models.Model):
         abstract = True
         unique_together = ('cart', 'variant')
 
-    def __str__(self):
-        return u"%s × %.10g" % (self.variant, self.quantity)
-
     def save(self, *args, **kwargs):
         assert(self.quantity > 0)
         super(CartItem, self).save(*args, **kwargs)

@@ -11,6 +11,7 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.test import Client
 
+from ..payment import PaymentFailure
 from ..payment.models import PaymentVariant
 from ..payment.tests import TestPaymentType
 from ..pricing import handler, Price
@@ -245,3 +246,14 @@ class PaymentQueueTest(BaseTestCase):
         payment_queue.confirms(self.order, variants)
         order = TestOrder.objects.get(id=self.order.pk)
         self.assertEqual(order.status, 'confirmed')
+
+    def test_confirms_amount_error(self):
+        data = (
+            ('gold', None),
+            ('platinum', {'amount': 100}),
+        )
+        forms = payment_queue.get_configuration_forms(self.order, data)
+        variants = payment_queue.create_variants(self.order, forms, clear=False)
+        variants[0][1].amount -= 1
+        with self.assertRaises(PaymentFailure):
+            payment_queue.confirms(self.order, variants)
