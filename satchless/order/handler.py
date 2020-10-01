@@ -41,10 +41,6 @@ class PaymentQueue(PaymentProvider, QueueHandler):
         for provider in self.queue:
             types = provider.enum_types(order=order, customer=customer)
             for provider, typ in types:
-                if not isinstance(typ, PaymentType):
-                    raise ValueError('Payment types must be instances of'
-                                     ' PaymentType type, not %s.' %
-                                     (repr(typ,)))
                 yield provider, typ
 
     def _get_provider(self, order, typ):
