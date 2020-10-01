@@ -7,6 +7,7 @@ Replace these with more appropriate tests for your application.
 
 from __future__ import absolute_import
 import datetime
+from decimal import Decimal
 from django import forms
 from django.contrib.auth import get_user_model
 from django.test import TestCase
@@ -31,14 +32,23 @@ class TestPaymentType(PaymentType):
             and self.customer == other.customer
         )
 
-
 class TestPaymentProvider(PaymentProvider):
     def enum_types(self, order=None, customer=None):
         yield self, TestPaymentType('gold', 'Gold', order=order, customer=customer)
         yield self, TestPaymentType('silver', 'Silver', order=order, customer=customer)
 
+    def create_variant(self, order, form, typ=None):
+        return models.PaymentVariant.objects.create(
+            order=order,
+            name=typ,
+            price=0,
+            amount=0,
+        )
+
 
 class TestPaymentProvider2Form(forms.Form):
+    amount = forms.IntegerField()
+
     def __init__(self, **kwargs):
         self.order = kwargs.pop('order')
         self.typ = kwargs.pop('typ')
@@ -53,6 +63,15 @@ class TestPaymentProvider2(TestPaymentProvider):
     def get_configuration_form(self, order, data, typ=None):
         return TestPaymentProvider2Form(data=data, order=order, typ=typ)
 
+    def create_variant(self, order, form, typ=None):
+        if not form.is_valid():
+            raise PaymentFailure(repr(form.errors))
+        return models.PaymentVariant.objects.create(
+            order=order,
+            name=typ,
+            price=Decimal(form.cleaned_data['amount']),
+            amount=Decimal(form.cleaned_data['amount']),
+        )
 
 class PaymentProviderTest(TestCase):
     def setUp(self):
@@ -80,13 +99,13 @@ class PaymentProviderTest(TestCase):
 
     def test_get_configuration_form_default(self):
         self.assertEqual(
-            self.p.get_configuration_form(self.order, {'foo': 'bar'}, 'gold'),
+            self.p.get_configuration_form(self.order, None, 'gold'),
             None
         )
 
     def test_get_configuration_form_override(self):
         p = TestPaymentProvider2()
-        data = {'foo': 'bar'}
+        data = {'amount': 100}
         form = p.get_configuration_form(self.order, data, 'platinum')
         self.assertIsInstance(form, TestPaymentProvider2Form)
         self.assertEqual(form.data, data)

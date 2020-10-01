@@ -17,7 +17,7 @@ from ..pricing import handler, Price
 from ..product.tests import DeadParrot
 from ..product.tests.pricing import FiveZlotyPriceHandler
 from .app import order_app
-from .handler import payment_queue
+from .handler import payment_queue, PaymentQueue
 from .models import (
     DeliveryGroup,
     Order,
@@ -180,3 +180,53 @@ class PaymentQueueTest(BaseTestCase):
         self.assertEqual(form.order, self.order)
         self.assertEqual(form.typ, 'platinum')
 
+    def test_get_provider_not_configured(self):
+        with self.assertRaises(ValueError):
+            PaymentQueue()._get_provider(self.order, 'platinum')
+
+    def test_get_configuration_forms(self):
+        data = (
+            ('gold', None),
+            ('platinum', {'amount': 100}),
+        )
+        forms = payment_queue.get_configuration_forms(self.order, data)
+
+        self.assertEqual(forms[0][0], 'gold')
+        self.assertIsNone(forms[0][1])
+
+        self.assertEqual(forms[1][0], 'platinum')
+        self.assertEqual(forms[1][1].data, data[1][1])
+        self.assertEqual(forms[1][1].order, self.order)
+        self.assertEqual(forms[1][1].typ, 'platinum')
+
+    def test_create_variants(self):
+        data = (
+            ('gold', None),
+            ('platinum', {'amount': 100}),
+        )
+        forms = payment_queue.get_configuration_forms(self.order, data)
+        variants = payment_queue.create_variants(self.order, forms, clear=False)
+        self.assertEqual(variants[0][0], 'gold')
+        self.assertIsInstance(variants[0][1], PaymentVariant)
+        self.assertEqual(variants[0][1].name, 'gold')
+        self.assertEqual(variants[0][1].order, self.order)
+        self.assertEqual(variants[0][1].amount, 0)
+
+        self.assertEqual(variants[1][0], 'platinum')
+        self.assertIsInstance(variants[1][1], PaymentVariant)
+        self.assertEqual(variants[1][1].name, 'platinum')
+        self.assertEqual(variants[1][1].order, self.order)
+        self.assertEqual(variants[1][1].amount, 100)
+
+        variants = payment_queue.create_variants(self.order, forms, clear=True)
+        self.assertEqual(variants[0][0], 'gold')
+        self.assertIsInstance(variants[0][1], PaymentVariant)
+        self.assertEqual(variants[0][1].name, 'gold')
+        self.assertEqual(variants[0][1].order, self.order)
+        self.assertEqual(variants[0][1].amount, 0)
+
+        self.assertEqual(variants[1][0], 'platinum')
+        self.assertIsInstance(variants[1][1], PaymentVariant)
+        self.assertEqual(variants[1][1].name, 'platinum')
+        self.assertEqual(variants[1][1].order, self.order)
+        self.assertEqual(variants[1][1].amount, 100)
