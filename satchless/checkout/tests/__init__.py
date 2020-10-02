@@ -2,7 +2,10 @@
 from __future__ import absolute_import
 from django.conf import settings
 from django.http import HttpResponse
-from django.test import Client
+from django.test import (
+    Client,
+    TestCase,
+)
 from satchless.cart.tests import TestCart
 
 from ...cart.models import CART_SESSION_KEY
@@ -11,11 +14,9 @@ from ...pricing import handler as pricing_handler
 from ...product.tests import DeadParrot
 from ...product.tests.pricing import FiveZlotyPriceHandler
 from ...order.tests import TestOrder
-from ...util.tests import BaseTestCase
-
 from ..app import CheckoutApp
 
-class BaseCheckoutAppTests(BaseTestCase):
+class BaseCheckoutAppTests(TestCase):
     def _create_cart(self, client):
         cart = self._get_or_create_cart_for_client(client)
         cart.replace_item(self.macaw_blue, 1)
@@ -74,5 +75,4 @@ class App(BaseCheckoutAppTests):
         pricing_handler.pricing_queue = pricing_handler.PricingQueue(FiveZlotyPriceHandler)
 
     def tearDown(self):
-        #self._teardown_settings(self.original_settings, self.custom_settings)
         pricing_handler.pricing_queue = pricing_handler.PricingQueue(*self.original_handlers)

@@ -13,7 +13,11 @@ from django.contrib.auth import (
 )
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse
-from django.test import Client, RequestFactory
+from django.test import (
+    Client,
+    RequestFactory,
+    TestCase,
+)
 from ...cart.models import Cart, CartItem, CART_SESSION_KEY
 
 from ...category.models import Category
@@ -23,7 +27,6 @@ from ...pricing import (
 )
 from ...product.tests.pricing import FiveZlotyPriceHandler
 from ...product.tests import DeadParrot, ZombieParrot
-from ...util.tests import BaseTestCase
 
 from .. import models
 from .. import signals
@@ -41,7 +44,7 @@ class TestCartItem(CartItem):
     cart = dj_models.ForeignKey(TestCart, related_name='items', on_delete=dj_models.PROTECT)
 
 
-class Cart(BaseTestCase):
+class Cart(TestCase):
     def setUp(self):
         self.category_birds = Category.objects.create(name='birds',
                                                       slug='birds')
@@ -70,7 +73,11 @@ class Cart(BaseTestCase):
         self.category_birds.products.add(self.macaw)
         self.user1.save()
 
+        self.original_pricing_queue = pricing_handler.pricing_queue
         pricing_handler.pricing_queue = pricing_handler.PricingQueue(FiveZlotyPriceHandler)
+
+    def tearDown(self):
+        pricing_handler.pricing_queue = self.original_pricing_queue
 
     def test_str(self):
         cart1 = TestCart(typ='satchless.test_cart1')

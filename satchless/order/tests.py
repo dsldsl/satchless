@@ -9,7 +9,10 @@ import six
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
-from django.test import Client
+from django.test import (
+    Client,
+    TestCase,
+)
 
 from ..payment import PaymentFailure
 from ..payment.models import PaymentVariant
@@ -29,13 +32,11 @@ from .models import (
 from .exceptions import EmptyCart
 from ..cart.tests import TestCart
 
-from ..util.tests import BaseTestCase
-
 class TestOrder(Order):
     cart = models.ForeignKey(TestCart, blank=True, null=True, related_name='orders', on_delete=models.PROTECT)
     objects = OrderManager()
 
-class OrderTest(BaseTestCase):
+class OrderTest(TestCase):
     def setUp(self):
         order_app.order_model = TestOrder
         self.macaw = DeadParrot.objects.create(slug='macaw',
@@ -132,7 +133,7 @@ class OrderTest(BaseTestCase):
         self.assertEqual(order.paymentvariant, variant)
 
 
-class OrderedItemTest(BaseTestCase):
+class OrderedItemTest(TestCase):
     def setUp(self):
         order = TestOrder.objects.create(currency='USD')
         group = DeliveryGroup.objects.create(order=order)
@@ -151,7 +152,7 @@ class OrderedItemTest(BaseTestCase):
         self.assertEqual(self.item.price(), Price(net=20, gross=22, currency='USD'))
 
 
-class PaymentQueueTest(BaseTestCase):
+class PaymentQueueTest(TestCase):
     def setUp(self):
         self.order = TestOrder.objects.create(currency='USD')
         self.customer = get_user_model().objects.create()
