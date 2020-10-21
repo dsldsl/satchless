@@ -1,11 +1,10 @@
+from __future__ import absolute_import
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 
 from satchless.core.handler import QueueHandler
 from satchless.payment import PaymentFailure
 
-from ..delivery import DeliveryProvider, DeliveryType
-from ..delivery.models import DeliveryVariant
 from ..payment import PaymentProvider, PaymentType
 from ..payment.models import PaymentVariant
 from . import Partitioner
@@ -42,10 +41,6 @@ class PaymentQueue(PaymentProvider, QueueHandler):
         for provider in self.queue:
             types = provider.enum_types(order=order, customer=customer)
             for provider, typ in types:
-                if not isinstance(typ, PaymentType):
-                    raise ValueError('Payment types must be instances of'
-                                     ' PaymentType type, not %s.' %
-                                     (repr(typ,)))
                 yield provider, typ
 
     def _get_provider(self, order, typ):
@@ -69,33 +64,21 @@ class PaymentQueue(PaymentProvider, QueueHandler):
     def create_variant(self, order, form, typ=None, clear=False):
         typ = typ or order.payment_type
         provider = self._get_provider(order, typ)
-        try:
-            if clear:
-                order.paymentvariant_set.all().delete()
-        except PaymentVariant.DoesNotExist:
-            pass
+        if clear:
+            order.paymentvariant_set.all().delete()
         return provider.create_variant(order=order, form=form, typ=typ)
 
     def create_variants(self, order, forms, clear=False):
         variants = []
+        if clear:
+            order.paymentvariant_set.all().delete()
         for index, (typ, form) in enumerate(forms):
-            try:
-                variants.append((typ, self.create_variant(order, form, typ, clear),))
-            except PaymentFailure as pf:
-                pf.index = index
-                for typ, variant_ref in variants:
-                    if typ == 'paymentsgateway':
-                        for reused_variant in variant_ref.reused_set.all():
-                            reused_variant.reused_by = None
-                            reused_variant.save()
-                raise
-
+            variants.append((typ, self.create_variant(order, form, typ, clear=False)))
         return variants
 
     def confirm(self, order, typ=None, variant=None):
         typ = typ or order.payment_type
         provider = self._get_provider(order, typ)
-
         return provider.confirm(order=order, typ=typ, variant=variant)
 
     def confirms(self, order, variants):
@@ -109,47 +92,3 @@ class PaymentQueue(PaymentProvider, QueueHandler):
 payment_providers = getattr(settings, 'SATCHLESS_PAYMENT_PROVIDERS', [])
 payment_queue = PaymentQueue(*payment_providers)
 
-
-### DELIVERY PROVIDERS
-class DeliveryQueue(DeliveryProvider, QueueHandler):
-    element_class = DeliveryProvider
-
-    def enum_types(self, delivery_group=None, customer=None):
-        for provider in self.queue:
-            types = provider.enum_types(delivery_group=delivery_group,
-                                        customer=customer)
-            for provider, typ in types:
-                if not isinstance(typ, DeliveryType):
-                    raise ValueError('Delivery types must be instances of'
-                                     ' DeliveryType type, not %s.' %
-                                     (repr(typ,)))
-                yield provider, typ
-
-    def _get_provider(self, delivery_group, typ):
-        for provider, delivery_type in self.enum_types(delivery_group):
-            if delivery_type.typ == typ:
-                return provider
-        raise ValueError('Unable to find a delivery provider for type %s' %
-                         (typ,))
-
-    def get_configuration_form(self, delivery_group, data, typ=None):
-        typ = typ or delivery_group.delivery_type
-        provider = self._get_provider(delivery_group, typ)
-        return provider.get_configuration_form(delivery_group=delivery_group,
-                                               data=data, typ=typ)
-
-    def create_variant(self, delivery_group, form, typ=None):
-        typ = typ or delivery_group.delivery_type
-        provider = self._get_provider(delivery_group, typ)
-        # XXX: Do we really need it here?
-        try:
-            if delivery_group.deliveryvariant.pk:
-                delivery_group.deliveryvariant.delete()
-        except DeliveryVariant.DoesNotExist:
-            pass
-        return provider.create_variant(delivery_group=delivery_group,
-                                       form=form, typ=typ)
-
-
-delivery_providers = getattr(settings, 'SATCHLESS_DELIVERY_PROVIDERS', [])
-delivery_queue = DeliveryQueue(*delivery_providers)

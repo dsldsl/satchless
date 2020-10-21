@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 import datetime
 import decimal
 from django.conf import settings
@@ -11,6 +12,8 @@ from ..product.models import Variant
 from ..util import countries
 from . import signals
 from .exceptions import EmptyCart
+import six
+from six.moves import range
 
 class OrderManager(models.Manager):
 
@@ -28,11 +31,10 @@ class OrderManager(models.Manager):
                                               currency=cart.currency)
         else:
             order = instance
-            order.groups.all().delete()
-            try:
-                order.paymentvariant_set.all().delete()
-            except ObjectDoesNotExist:
-                pass
+            for group in order.groups.all():
+                group.items.all().delete()
+                group.delete()
+            order.paymentvariant_set.all().delete()
         groups = partitioner_queue.partition(cart)
         for group in groups:
             delivery_group = order.create_delivery_group()
@@ -95,12 +97,12 @@ class Order(models.Model):
         verbose_name_plural = _('orders (business)')
         ordering = ('-last_status_change',)
 
-    def __unicode__(self):
+    def __str__(self):
         return _('Order #%d') % self.id
 
     def save(self, *args, **kwargs):
         if not self.token:
-            for i in xrange(100):
+            for i in range(100):
                 token = ''.join(random.sample(
                                 '0123456789abcdefghijklmnopqrstuvwxyz', 32))
                 if not Order.objects.filter(token=token).exists():
@@ -124,16 +126,11 @@ class Order(models.Model):
         return sum([g.subtotal(currency=self.currency) for g in self.groups.all()],
                    Price(0, currency=self.currency))
 
-    def delivery_price(self):
-        return sum([g.delivery_price() for g in self.groups.all()],
-                   Price(0, currency=self.currency))
-
     def payment_price(self):
-        try:
-            return sum([p.price for p in self.paymentvariant_set.all()],
-                Price(0, currency=self.currency))
-        except ObjectDoesNotExist:
-            return Price(0, currency=self.currency)
+        return Price(
+            sum([p.price for p in self.paymentvariant_set.all()], 0),
+            currency=self.currency
+        )
 
     def total(self):
         payment_price = self.payment_price()
@@ -146,7 +143,7 @@ class Order(models.Model):
     def create_ordered_item(self, delivery_group, item):
         price = item.get_unit_price()
         variant = item.variant.get_subtype_instance()
-        name = unicode(variant)
+        name = six.text_type(variant)
         ordered_item_class = self.get_ordered_item_class()
         ordered_item = ordered_item_class(delivery_group=delivery_group,
                                           product_variant=item.variant,
@@ -174,18 +171,10 @@ class DeliveryGroup(models.Model):
     def subtotal(self, currency=None):
         currency = currency or self.order.currency
         return sum([i.price(currency=currency) for i in self.items.all()],
-                Price(0, currency=currency))    
-
-    def delivery_price(self):
-        try:
-            return Price(self.deliveryvariant.price,
-                         currency=self.order.currency)
-        except ObjectDoesNotExist:
-            return Price(0, currency=self.order.currency)
+                Price(0, currency=currency))
 
     def total(self):
-        delivery_price = self.delivery_price()
-        return delivery_price + sum([i.price() for i in self.items.all()],
+        return sum([i.price() for i in self.items.all()],
                                     Price(0, currency=self.order.currency))
 
 

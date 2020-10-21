@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 from decimal import Decimal
 
 class Price(object):
@@ -16,28 +17,9 @@ class Price(object):
         self.currency = currency
         self.tax_name = tax_name
 
-    def __unicode__(self):
-        if self.tax_name:
-            return (u"net=%s,gross=%s (%s)" %
-                    (self.net, self.gross, self.tax_name))
-        else:
-            return u"net=%s,gross=%s" % (self.net, self.gross)
-
     def __repr__(self):
         return ("Price(net=%.10g, gross=%.10g, currency='%s')" %
                 (self.net, self.gross, self.currency))
-
-    def __cmp__(self, other):
-        if not isinstance(other, Price):
-            raise TypeError('Cannot compare Price to %s' % other)
-        if self.currency != other.currency:
-            raise ValueError('Cannot compare Prices in %s and %s' %
-                             (self.currency, other.currency))
-        if self.net < other.net:
-            return -1
-        elif self.net > other.net:
-            return 1
-        return 0
 
     def __eq__(self, other):
         if isinstance(other, Price):
@@ -47,7 +29,39 @@ class Price(object):
         return False
 
     def __ne__(self, other):
-        return not self == other
+        return not (self == other)
+
+    def __gt__(self, other):
+        if not isinstance(other, Price):
+            raise TypeError('Cannot compare Price to %s' % other)
+        if self.currency != other.currency:
+            raise ValueError('Cannot compare Prices in %s and %s' %
+                             (self.currency, other.currency))
+        return self.net > other.net
+
+    def __ge__(self, other):
+        if not isinstance(other, Price):
+            raise TypeError('Cannot compare Price to %s' % other)
+        if self.currency != other.currency:
+            raise ValueError('Cannot compare Prices in %s and %s' %
+                             (self.currency, other.currency))
+        return self.net >= other.net
+
+    def __lt__(self, other):
+        if not isinstance(other, Price):
+            raise TypeError('Cannot compare Price to %s' % other)
+        if self.currency != other.currency:
+            raise ValueError('Cannot compare Prices in %s and %s' %
+                             (self.currency, other.currency))
+        return self.net < other.net
+
+    def __le__(self, other):
+        if not isinstance(other, Price):
+            raise TypeError('Cannot compare Price to %s' % other)
+        if self.currency != other.currency:
+            raise ValueError('Cannot compare Prices in %s and %s' %
+                             (self.currency, other.currency))
+        return self.net <= other.net
 
     def __mul__(self, other):
         price_net = self.net * other
@@ -82,16 +96,11 @@ class PriceRange(object):
     min_price = None
     max_price = None
 
-    def __init__(self, min_price, max_price=None):
-        self.min_price = min_price
-        if max_price is None:
-            max_price = min_price
+    def __init__(self, min_price, max_price):
         if min_price > max_price:
             raise ValueError('Cannot create a PriceRange from %s to %s' %
                              (min_price, max_price))
-        if min_price.currency != max_price.currency:
-            raise ValueError('Cannot create a PriceRange as %s and %s use'
-                             ' different currencies' % (min_price, max_price))
+        self.min_price = min_price
         self.max_price = max_price
 
     def __repr__(self):
@@ -127,7 +136,7 @@ class PriceRange(object):
         return False
 
     def __ne__(self, other):
-        return not self == other
+        return not (self == other)
 
     def __contains__(self, item):
         if not isinstance(item, Price):

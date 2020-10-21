@@ -1,0 +1,14 @@
+[run]
+source = satchless
+omit =
+    */tests*
+    */migrations/*
+
+[report]
+exclude_lines =
+    pragma: no cover
+    def __repr__
+    raise NotImplementedError
+    raise ImproperlyConfigured
+    if __name__ == .__main__.:
+    def parse_args

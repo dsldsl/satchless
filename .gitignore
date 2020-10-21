@@ -1,6 +1,15 @@
 .*
+!.github
 !.gitignore
+!.coveragerc
 *.py[co]
 *~
 doc/_build
 website/*.db
+*.py.bak
+build/
+Pipfile*
+dist/
+*.egg-info
+/satchless_test/db.sqlite3
+.coverage

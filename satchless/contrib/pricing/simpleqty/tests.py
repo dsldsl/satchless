@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 from decimal import Decimal
 from django.conf import settings
 from django.test import TestCase
@@ -11,7 +12,7 @@ from .models import ProductPrice
 
 class Pricing(TestCase):
     TEST_PRICING_HANDLERS = [
-        'satchless.contrib.pricing.simpleqty.SimpleQtyPricingHandler',
+        'satchless.contrib.pricing.simpleqty.handler.SimpleQtyPricingHandler',
     ]
 
     def setUp(self):
@@ -40,7 +41,6 @@ class Pricing(TestCase):
         self.pricing_queue = PricingQueue(*self.TEST_PRICING_HANDLERS)
 
     def tearDown(self):
-        ProductPrice.objects.all().delete()
         self.pricing_queue = PricingQueue(*self.TEST_PRICING_HANDLERS)
 
     def test_price(self):
@@ -59,58 +59,72 @@ class Pricing(TestCase):
     def test_basicprices(self):
         macaw_price = ProductPrice.objects.create(product=self.macaw,
                                                   price=Decimal('10.0'))
+        self.assertEqual(str(macaw_price), 'macaw')
         macaw_price.qty_overrides.create(min_qty=5, price=Decimal('9.0'))
         macaw_price.qty_overrides.create(min_qty=10, price=Decimal('8.0'))
         macaw_price.offsets.create(variant=self.macaw_blue_a,
                                    price_offset=Decimal('2.0'))
         self.assertEqual(self.pricing_queue.get_variant_price(self.macaw_blue_d,
-                                                              currency='BTC',
+                                                              currency='USD',
                                                               quantity=1),
-                         Price(Decimal('10.0'), currency='BTC'))
+                         Price(Decimal('10.0'), currency='USD'))
         self.assertEqual(self.pricing_queue.get_variant_price(self.macaw_blue_d,
-                                                              currency='BTC',
+                                                              currency='USD',
                                                               quantity=Decimal('4.9999')),
-                         Price(Decimal('10.0'), currency='BTC'))
+                         Price(Decimal('10.0'), currency='USD'))
         self.assertEqual(self.pricing_queue.get_variant_price(self.macaw_blue_d,
-                                                              currency='BTC',
+                                                              currency='USD',
                                                               quantity=5),
-                         Price(Decimal('9.0'), currency='BTC'))
+                         Price(Decimal('9.0'), currency='USD'))
         self.assertEqual(self.pricing_queue.get_variant_price(self.macaw_blue_d,
-                                                              currency='BTC',
+                                                              currency='USD',
                                                               quantity=Decimal('9.9999')),
-                         Price(Decimal('9.0'), currency='BTC'))
+                         Price(Decimal('9.0'), currency='USD'))
         self.assertEqual(self.pricing_queue.get_variant_price(self.macaw_blue_d,
-                                                              currency='BTC',
+                                                              currency='USD',
                                                               quantity=10),
-                         Price(Decimal('8.0'), currency='BTC'))
+                         Price(Decimal('8.0'), currency='USD'))
         self.assertEqual(self.pricing_queue.get_variant_price(self.macaw_blue_d,
-                                                              currency='BTC',
+                                                              currency='USD',
                                                               quantity=100),
-                         Price(Decimal('8.0'), currency='BTC'))
+                         Price(Decimal('8.0'), currency='USD'))
         self.assertEqual(self.pricing_queue.get_variant_price(self.macaw_blue_a,
-                                                              currency='BTC',
+                                                              currency='USD',
                                                               quantity=1),
-                         Price(Decimal('12.0'), currency='BTC'))
+                         Price(Decimal('12.0'), currency='USD'))
         self.assertEqual(self.pricing_queue.get_variant_price(self.macaw_blue_a,
-                                                              currency='BTC',
+                                                              currency='USD',
                                                               quantity=Decimal('4.9999')),
-                         Price(Decimal('12.0'), currency='BTC'))
+                         Price(Decimal('12.0'), currency='USD'))
         self.assertEqual(self.pricing_queue.get_variant_price(self.macaw_blue_a,
-                                                              currency='BTC',
+                                                              currency='USD',
                                                               quantity=5),
-                         Price(Decimal('11.0'), currency='BTC'))
+                         Price(Decimal('11.0'), currency='USD'))
         self.assertEqual(self.pricing_queue.get_variant_price(self.macaw_blue_a,
-                                                              currency='BTC',
+                                                              currency='USD',
                                                               quantity=Decimal('9.9999')),
-                         Price(Decimal('11.0'), currency='BTC'))
+                         Price(Decimal('11.0'), currency='USD'))
         self.assertEqual(self.pricing_queue.get_variant_price(self.macaw_blue_a,
-                                                              currency='BTC',
+                                                              currency='USD',
                                                               quantity=10),
-                         Price(Decimal('10.0'), currency='BTC'))
+                         Price(Decimal('10.0'), currency='USD'))
         self.assertEqual(self.pricing_queue.get_variant_price(self.macaw_blue_a,
-                                                              currency='BTC',
+                                                              currency='USD',
                                                               quantity=100),
-                         Price(Decimal('10.0'), currency='BTC'))
+                         Price(Decimal('10.0'), currency='USD'))
+
+    def test_product_price_does_not_exist(self):
+        ProductPrice.objects.filter(product=self.macaw_blue_d.product).delete()
+        self.assertEqual(
+            self.pricing_queue.get_variant_price(
+                self.macaw_blue_d, currency='USD', quantity=1, price=Price(1, currency='USD')),
+            Price(1, currency='USD')
+        )
+        self.assertEqual(
+            self.pricing_queue.get_product_price_range(
+                self.macaw_blue_d.product, currency='USD', price=Price(1, currency='USD')),
+            Price(1, currency='USD')
+        )
 
     def test_basicranges(self):
         macaw_price = ProductPrice.objects.create(product=self.macaw,
@@ -130,17 +144,17 @@ class Pricing(TestCase):
         cockatoo_price.offsets.create(variant=self.cockatoo_green_a,
                                       price_offset=Decimal('4.0'))
         self.assertEqual(self.pricing_queue.get_product_price_range(self.macaw,
-                                                                    currency='BTC'),
+                                                                    currency='USD'),
                         PriceRange(min_price=Price(Decimal('10.0'),
-                                                   currency='BTC'),
+                                                   currency='USD'),
                                    max_price=Price(Decimal('16.0'),
-                                                   currency='BTC')))
+                                                   currency='USD')))
         self.assertEqual(self.pricing_queue.get_product_price_range(self.cockatoo,
-                                                                    currency='BTC'),
+                                                                    currency='USD'),
                         PriceRange(min_price=Price(Decimal('4.0'),
-                                                   currency='BTC'),
+                                                   currency='USD'),
                                    max_price=Price(Decimal('16.0'),
-                                                   currency='BTC')))
+                                                   currency='USD')))
 
     def test_cartprices(self):
         macaw_price = ProductPrice.objects.create(product=self.macaw,
@@ -154,11 +168,10 @@ class Pricing(TestCase):
         cart.replace_item(self.macaw_blue_d, 4)
         item_macaw_blue_a = cart.items.get(variant=self.macaw_blue_a)
         item_macaw_blue_d = cart.items.get(variant=self.macaw_blue_d)
-
-        self.assertEqual(item_macaw_blue_d.get_unit_price(currency='BTC'),
-                         Price(Decimal('10.0'), currency='BTC'))
-        self.assertEqual(item_macaw_blue_a.get_unit_price(currency='BTC'),
-                         Price(Decimal('12.0'), currency='BTC'))
+        self.assertEqual(item_macaw_blue_a.get_unit_price(currency='USD'),
+                         Price(Decimal('12.0'), currency='USD'))
+        self.assertEqual(item_macaw_blue_d.get_unit_price(currency='USD'),
+                         Price(Decimal('10.0'), currency='USD'))
         cart.add_item(self.macaw_blue_a, 1)
         cart.add_item(self.macaw_blue_d, 1)
         item_macaw_blue_a = cart.items.get(variant=self.macaw_blue_a)
@@ -166,10 +179,11 @@ class Pricing(TestCase):
 
         macaw_variant = item_macaw_blue_a.variant.get_subtype_instance()
         self.assertEqual(self.pricing_queue.get_variant_price(macaw_variant,
-                                                              currency='BTC',
+                                                              currency='USD',
                                                               cart=cart),
-                         Price(Decimal('11.0'), currency='BTC'))
+                         Price(Decimal('11.0'), currency='USD'))
         # contextless product
-        self.assertEqual(self.pricing_queue.get_variant_price(macaw_variant,
-                                                              currency='BTC'),
-                         Price(Decimal('12.0'), currency='BTC'))
+        self.assertEqual(
+            self.pricing_queue.get_variant_price(macaw_variant, currency='USD'),
+            Price(Decimal('12.0'), currency='USD')
+        )

@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from __future__ import absolute_import
 from django.db import models, migrations
 
 
@@ -20,7 +21,7 @@ class Migration(migrations.Migration):
                 ('description', models.TextField(verbose_name='description', blank=True)),
                 ('price', models.DecimalField(verbose_name='unit price', max_digits=12, decimal_places=4)),
                 ('amount', models.DecimalField(verbose_name='payment applied', max_digits=12, decimal_places=4)),
-                ('order', models.ForeignKey(to='order.Order')),
+                ('order', models.ForeignKey(to='order.Order', on_delete=models.PROTECT)),
             ],
             options={
                 'abstract': False,

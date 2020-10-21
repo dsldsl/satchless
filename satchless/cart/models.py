@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from __future__ import absolute_import
 from decimal import Decimal
 from django.conf import settings
 from django.db import models
@@ -15,13 +16,20 @@ CART_SESSION_KEY = '_satchless_cart-%s' # takes typ
 def get_default_currency():
     return settings.SATCHLESS_DEFAULT_CURRENCY
 
+def user_is_authenticated(user):
+    # Django 1/2/3 compatible
+    if callable(user.is_authenticated):
+        return user.is_authenticated() # pragma: no cover
+    return user.is_authenticated
+
+
 class CartManager(models.Manager):
     def get_from_request(self, request, typ):
         try:
             cart = self.get(typ=typ, pk=request.session[CART_SESSION_KEY % typ])
-            if cart.owner is None and request.user.is_authenticated():
+            if cart.owner is None and user_is_authenticated(request.user):
                 cart.owner = request.user
-                cart.save()
+                cart.save(update_fields=['owner'])
         except (self.model.DoesNotExist, KeyError, AttributeError):
             raise self.model.DoesNotExist()
         return cart
@@ -30,12 +38,10 @@ class CartManager(models.Manager):
         try:
             return self.get_from_request(request, typ)
         except (self.model.DoesNotExist, KeyError):
-            owner = request.user if request.user.is_authenticated() else None
+            owner = request.user if user_is_authenticated(request.user) else None
             cart = self.create(typ=typ, owner=owner)
-            try:
+            if hasattr(request, 'session'):
                 request.session[CART_SESSION_KEY % typ] = cart.pk
-            except AttributeError:
-                pass
             return cart
 
 
@@ -56,7 +62,7 @@ class Cart(models.Model):
 
     objects = CartManager()
 
-    def __unicode__(self):
+    def __str__(self):
         if self.owner:
             return u"%s of %s" % (self.typ, self.owner.username)
         else:
@@ -161,9 +167,6 @@ class CartItem(models.Model):
         abstract = True
         unique_together = ('cart', 'variant')
 
-    def __unicode__(self):
-        return u"%s × %.10g" % (self.variant, self.quantity)
-
     def save(self, *args, **kwargs):
         assert(self.quantity > 0)
         super(CartItem, self).save(*args, **kwargs)
@@ -172,8 +175,9 @@ class CartItem(models.Model):
         from ..pricing.handler import pricing_queue
         variant = self.variant.get_subtype_instance()
         currency = currency or self.cart.currency
-        return pricing_queue.get_variant_price(variant, currency,
-                quantity=self.quantity, cart=self.cart, cartitem=self, **kwargs)
+        return pricing_queue.get_variant_price(
+            variant, currency, quantity=self.quantity, cart=self.cart,
+            cartitem=self, **kwargs)
 
     def price(self, currency=None, **kwargs):
         return self.get_unit_price(currency=currency, **kwargs) * self.quantity

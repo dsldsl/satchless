@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 import decimal
 
 from django.test import TestCase
@@ -44,14 +45,78 @@ class PriceTest(TestCase):
     def test_invalid_addition(self):
         self.assertRaises(ValueError, lambda: self.p1 + self.p3)
 
+    def test_add_mismatch_tax_name(self):
+        self.assertEquals(
+            self.p1 + Price(10, currency='BTC', tax_name='other'),
+            Price(20, currency='BTC')
+        )
+
+    def test_not_eq(self):
+        self.assertFalse(self.p1 == Price(0, currency='USD'))
+
+    def test_not_eq_mismatch_type(self):
+        self.assertFalse(self.p1 == 0)
+
+    def test_gt_mismatch_type(self):
+        with self.assertRaises(TypeError):
+            self.p1 > 0
+
+    def test_gt(self):
+        self.assertFalse(self.p1 > self.p2)
+        self.assertTrue(self.p2 > self.p1)
+
+    def test_ge(self):
+        self.assertTrue(self.p1 >= self.p1)
+        self.assertFalse(self.p1 >= self.p2)
+        self.assertTrue(self.p2 >= self.p1)
+
+    def test_lt(self):
+        self.assertTrue(self.p1 < self.p2)
+        self.assertFalse(self.p2 < self.p1)
+
+    def test_le(self):
+        self.assertTrue(self.p1 <= self.p1)
+        self.assertTrue(self.p1 <= self.p2)
+        self.assertFalse(self.p2 <= self.p1)
+
+    def test_gt_mismatch_currency(self):
+        with self.assertRaises(ValueError):
+            self.p1 > self.p3
+
+    def test_ge_mismatch_type(self):
+        with self.assertRaises(TypeError):
+            self.p1 >= 0
+
+    def test_ge_mismatch_currency(self):
+        with self.assertRaises(ValueError):
+            self.p1 >= self.p3
+
+    def test_lt_mismatch_type(self):
+        with self.assertRaises(TypeError):
+            self.p1 < 0
+
+    def test_lt_mismatch_currency(self):
+        with self.assertRaises(ValueError):
+            self.p1 < self.p3
+
+    def test_le_mismatch_type(self):
+        with self.assertRaises(TypeError):
+            self.p1 <= 0
+
+    def test_le_mismatch_currency(self):
+        with self.assertRaises(ValueError):
+            self.p1 <= self.p3
+
     def test_tax(self):
         tax_name = '2x Tax'
         tax = LinearTax(2, name=tax_name)
         p = self.p1 + tax
         self.assertEqual(p.net, self.p1.net)
         self.assertEqual(p.gross, self.p1.gross*2)
+        self.assertEqual(p.tax, (self.p1.gross*2) - self.p1.net)
         self.assertEqual(p.currency, self.p1.currency)
         self.assertEqual(p.tax_name, tax_name)
+
 
 class PriceRangeTest(TestCase):
     def setUp(self):
@@ -83,7 +148,13 @@ class PriceRangeTest(TestCase):
     def test_valid_membership(self):
         self.assertTrue(self.p1 in self.pr1)
         self.assertTrue(self.p2 in self.pr1)
+        self.assertFalse(self.p1 in self.pr2)
+        self.assertFalse(self.p2 in self.pr2)
+
+        self.assertTrue(self.p3 in self.pr2)
+        self.assertTrue(self.p4 in self.pr2)
         self.assertFalse(self.p3 in self.pr1)
+        self.assertFalse(self.p4 in self.pr1)
 
     def test_invalid_membership(self):
         self.assertRaises(TypeError, lambda: 15 in self.pr1)
@@ -95,6 +166,29 @@ class PriceRangeTest(TestCase):
         pr2 = self.pr2.replace(min_price=self.p2)
         self.assertEqual(pr2.min_price, self.p2)
         self.assertEqual(pr2.max_price, self.p4)
+
+    def test_invalid_range(self):
+        with self.assertRaises(ValueError):
+            PriceRange(Price(2, currency='USD'), Price(1, currency='USD'))
+
+    def test_mismatch_currency(self):
+        with self.assertRaises(ValueError):
+            PriceRange(Price(1, currency='USD'), Price(2, currency='BTC'))
+
+    def test_add_price_range_mismatch_currency(self):
+        pr = PriceRange(Price(1, currency='USD'), Price(2, currency='USD'))
+        with self.assertRaises(ValueError):
+            self.pr1 + pr
+
+    def test_add_price_mismatch_currency(self):
+        with self.assertRaises(ValueError):
+            self.pr1 + Price(1, currency='USD')
+
+    def test_eq_other_type(self):
+        self.assertFalse(self.pr1 == 0)
+
+    def test_ne(self):
+        self.assertFalse(self.pr1 != self.pr1)
 
     def test_tax(self):
         tax_name = '2x Tax'

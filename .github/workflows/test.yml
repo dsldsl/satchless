@@ -1,0 +1,64 @@
+name: Run tests
+
+on:
+  push:
+    branches: [ '*' ]
+    tags: [ '*' ]
+
+jobs:
+  build:
+    name: Python ${{ matrix.python-version }}, Django ${{ matrix.django-version }}
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        include:
+          - python-version: '2.7'
+            django-version: '1.11'
+            requirements-file: requirements-test.py2.txt
+          - python-version: '3.7'
+            django-version: '1.11'
+            requirements-file: requirements-test.py3.txt
+          - python-version: '3.8'
+            django-version: '2.0'
+            requirements-file: requirements-test.py3.txt
+            coverage: true
+          - python-version: '3.8'
+            django-version: '3.0'
+            requirements-file: requirements-test.py3.txt
+
+    steps:
+      - name: Setup Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+          architecture: x64
+
+      - name: Checkout repo
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 1
+          submodules: recursive
+
+      - name: Install dependencies & project
+        run: |
+          pip install Django~=${{ matrix.django-version }}
+          pip install -r ${{ matrix.requirements-file }}
+
+      - name: Create test database
+        run: python ${GITHUB_WORKSPACE}/satchless_test/manage.py migrate
+
+      - name: Run tests with coverage
+        # Run tests and upload coverage stats to coveralls.io
+        if: ${{ matrix.coverage }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          pip install -r requirements-coverage.txt
+          py.test --cov
+          coveralls
+
+      - name: Run tests
+        # Run tests without uploading coverage stats to coveralls.io
+        if: ${{ ! matrix.coverage }}
+        run: py.test

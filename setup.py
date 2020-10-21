@@ -1,4 +1,5 @@
 #! /usr/bin/env python
+from __future__ import absolute_import
 from setuptools import setup, find_packages
 
 # dynamic retrive version number from stachless.VERSION
@@ -23,8 +24,9 @@ CLASSIFIERS = [
 ]
 
 REQUIREMENTS = [
-    'Django>=1.8,<2.0',
-    'django-mptt>=0.4.2,<0.9.2',
+    'six',
+    'Django~=1.11.0',
+    'django-mptt~=0.9.0',
 ]
 
 EXTRAS = {

@@ -1,25 +1,9 @@
+import six
+
 class PaymentFailure(Exception):
     def __init__(self, error_message):
         super(PaymentFailure, self).__init__(error_message)
         self.error_message = error_message
-
-
-class PaymentsGatewayReceiptFormError(PaymentFailure):
-    def __init__(self, form):
-        errors = dict(form.errors,
-                      __all__=form.non_form_errors)
-        error_message = u', '.join(
-            [u':'.join([key, u', '.join(msgs)])
-             for key, msgs in errors.iteritems()])
-        super(PaymentsGatewayReceiptFormError, self).__init__(error_message)
-
-
-class ConfirmationFormNeeded(Exception):
-    def __init__(self, form=None, action='', method='post'):
-        super(ConfirmationFormNeeded, self).__init__()
-        self.form = form
-        self.action = action
-        self.method = method
 
 
 class PaymentType(object):
@@ -62,10 +46,8 @@ class PaymentProvider(object):
         '''
         raise NotImplementedError()
 
-    def confirm(self, order, typ=None):
+    def confirm(self, order, typ=None, variant=None):
         '''
         Confirm the payment, raise PaymentFailure on errors.
-        Backends which need a confirmation form should raise
-        ConfirmationFormNeeded.
         '''
         raise NotImplementedError()
